@@ -14,17 +14,17 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-    "outDir": "./build",
+    "outDir": "./dist",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.js",
-    "src/**/*.jsx",
-    "src/**/*.json"
+    "./src/**/*.ts",
+    "./src/**/*.tsx",
+    "./src/**/*.js",
+    "./src/**/*.jsx",
+    "./src/**/*.json"
   ],
   "exclude": ["node_modules"]
 }
