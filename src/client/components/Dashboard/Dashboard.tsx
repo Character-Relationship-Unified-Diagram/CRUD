@@ -1,4 +1,4 @@
-import { NetworkGraph } from '../NetworkGraph/NetworkGraph';
+import { NetworkGraph } from '../NetworkGraph/';
 
 export const Dashboard = () => {
   return (
