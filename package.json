@@ -1,8 +1,8 @@
 {
-  "name": "my-webpack-project",
+  "name": "Character-Relationship-Unified-Diagram",
   "version": "1.0.0",
-  "description": "My webpack project",
-  "main": "index.js",
+  "description": "Build a custom diagram to convey your characters' relationships",
+  "main": "dist/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:dev": "webpack --mode=development",
