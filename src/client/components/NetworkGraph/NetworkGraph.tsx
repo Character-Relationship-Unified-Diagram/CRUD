@@ -1,6 +1,7 @@
 import { ResponsiveNetworkCanvas } from '@nivo/network';
 
 export const NetworkGraph = ({ data }: any) => {
+  if (!data) return null;
   return (
     <ResponsiveNetworkCanvas
       data={data.nodes}

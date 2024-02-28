@@ -9,7 +9,7 @@ export const App = () => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Main />}>
-            <Route path="/dashboard" element={ <Dashboard /> } />
+            <Route path="/" element={<Dashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -1,7 +1,10 @@
-import { NetworkGraph } from "../NetworkGraph/NetworkGraph";
+import { NetworkGraph } from '../NetworkGraph/NetworkGraph';
 
 export const Dashboard = () => {
   return (
-    <NetworkGraph />
+    <>
+      <h1>Dashboard</h1>
+      <NetworkGraph />
+    </>
   );
-}
+};
