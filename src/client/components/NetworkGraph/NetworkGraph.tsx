@@ -1,4 +1,4 @@
-import { ResponsiveNetworkCanvas } from '@nivo/network';
+import { ResponsiveNetwork } from '@nivo/network';
 import { useSelector } from 'react-redux';
 
 export const NetworkGraph = () => {
@@ -11,7 +11,7 @@ export const NetworkGraph = () => {
     links,
   };
   return (
-    <ResponsiveNetworkCanvas
+    <ResponsiveNetwork
       data={data}
       margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
       repulsivity={6}
