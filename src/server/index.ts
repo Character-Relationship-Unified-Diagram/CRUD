@@ -4,7 +4,7 @@ import path from "path";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import userRoutes from './routes/api';
+import userRoutes from './routes/userRoute';
 
 const app = express();
 const port = process.env.port || 3000;
