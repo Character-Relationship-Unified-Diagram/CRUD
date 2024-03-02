@@ -45,8 +45,11 @@ export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
   return (
-    <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+    <nav>
+      <Box 
+        bg={useColorModeValue('gray.300', 'gray.900')} 
+        px={4}
+      >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
             size={'md'}
@@ -72,12 +75,6 @@ export const NavBar = () => {
               <Button onClick={toggleColorMode}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
-              <MenuList>
-                <MenuItem>Link 1</MenuItem>
-                <MenuItem>Link 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
-              </MenuList>
             </Menu>
           </Flex>
         </Flex>
@@ -92,6 +89,6 @@ export const NavBar = () => {
           </Box>
         ) : null}
       </Box>
-    </>
+    </nav>
   );
 };

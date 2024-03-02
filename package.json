@@ -11,7 +11,7 @@
     "buildServer": "tsc -p tsconfig.json",
     "server": "nodemon ./server/index.ts",
     "build": "npm run buildClient && npm run buildServer",
-    "dev": "concurrently --kill-others \"nodemon ./server/index.ts\" \"webpack serve --mode development --env development\" ",
+    "dev": "concurrently --kill-others \"nodemon server/index.ts\" \"webpack serve --mode development --env development\" ",
     "watch": "webpack --watch",
     "serve": "webpack serve"
   },
@@ -55,6 +55,7 @@
     "@nivo/network": "^0.84.0",
     "@reduxjs/toolkit": "^2.2.1",
     "concurrently": "^8.2.2",
+    "d3": "^7.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
     "framer-motion": "^11.0.6",
