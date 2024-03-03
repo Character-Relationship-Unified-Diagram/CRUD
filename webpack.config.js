@@ -20,9 +20,9 @@ const config = {
     host: 'localhost',
     proxy: [
       {
-        context: ['/api'],
+        context: ['/**'],
         target: 'http://localhost:3000',
-        pathRewrite: { '^/api': '' },
+        // pathRewrite: { '^/api': '' },
       },
     ],
   },

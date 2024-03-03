@@ -28,9 +28,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../assets')));
 app.use(express.static(path.join(__dirname, prod ? './' : '../../', 'dist')));
 
-app.get('/', (_req, res) => {
+app.get('*', (_req, res) => {
   return res.sendFile(
-    path.join(__dirname, prod ? '' : '../../', 'dist/index.html'),
+    path.join(__dirname, prod ? 'dist/index.html' : '../client/index.html'),
   );
 });
 

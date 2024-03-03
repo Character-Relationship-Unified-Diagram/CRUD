@@ -14,27 +14,32 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { useSelector } from 'react-redux';
 
 interface Props {
   children: React.ReactNode;
+  href: string;
 }
 
 const Links = ['Dashboard', 'Settings', 'Share'];
 
 const NavLink = (props: Props) => {
-  const { children } = props;
+  const { children, href } = props;
 
   return (
     <Box
       as="a"
       px={2}
       py={1}
-      rounded={'md'}
+      textAlign={'center'}
+      w={'7em'}
+      // rounded={'md'}
+      transition={'background-color 0.2s ease-in-out'}
       _hover={{
         textDecoration: 'none',
         bg: useColorModeValue('gray.200', 'gray.700'),
       }}
-      href={'#'}
+      href={`/${href.toLowerCase()}`}
     >
       {children}
     </Box>
@@ -44,11 +49,16 @@ const NavLink = (props: Props) => {
 export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
+  const currentProject = useSelector((state: any) => state?.currentProject);
+  const user = useSelector((state: any) => state?.user);
+
   return (
     <nav>
-      <Box 
-        bg={useColorModeValue('gray.300', 'gray.900')} 
+      <Box
+        bg="blackAlpha.200"
         px={4}
+        borderBottom={'1px solid rgba(255, 255, 255, 0.25)'}
+        shadow={'md'}
       >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
           <IconButton
@@ -59,20 +69,31 @@ export const NavBar = () => {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={'center'}>
-            <Box>Logo</Box>
             <HStack
               as={'nav'}
-              spacing={4}
+              spacing={0}
               display={{ base: 'none', md: 'flex' }}
+              bg={'rgba(0, 0, 0, 0.15)'}
+              rounded={'md'}
+              overflow={'hidden'}
+              shadow={'md'}
             >
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link} href={link}>
+                  {link}
+                </NavLink>
               ))}
             </HStack>
           </HStack>
-          <Flex alignItems={'center'}>
+          <Flex alignItems={'center'} gap={4}>
+            <Box flexBasis={0} whiteSpace={'nowrap'}>
+              {currentProject || 'Project'}
+            </Box>
+            <Box flexBasis={0} whiteSpace={'nowrap'}>
+              {user?.username || 'User'}
+            </Box>
             <Menu>
-              <Button onClick={toggleColorMode}>
+              <Button onClick={toggleColorMode} shadow={'md'}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
             </Menu>
@@ -81,9 +102,11 @@ export const NavBar = () => {
 
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
-            <Stack as={'nav'} spacing={4}>
+            <Stack as={'nav'} spacing={0}>
               {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+                <NavLink key={link} href={link}>
+                  {link}
+                </NavLink>
               ))}
             </Stack>
           </Box>
