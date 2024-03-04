@@ -6,11 +6,11 @@ import { ZoomBehavior, ZoomedElementBaseType, zoomIdentity } from 'd3-zoom';
 import './NetworkGraph.css';
 
 export const NetworkGraph = () => {
-  const nodes = useSelector((state: any) => state.main.networkData.nodes);
-  const links = useSelector((state: any) => state.main.networkData.links);
+  const nodes = useSelector((state: any) => state?.main?.networkData?.nodes);
+  const links = useSelector((state: any) => state?.main?.networkData?.links);
   const svgRef = useRef(null);
 
-  if (!nodes.length || !links.length) return null;
+  if (!nodes || !links) return null;
 
   const data = {
     nodes,
@@ -23,7 +23,7 @@ export const NetworkGraph = () => {
       // console.log(event);
       svgElement.selectAll('g').attr('transform', event.transform.toString());
     }
-    
+
     const zoom = d3.zoom().on('zoom', zoomed) as any;
     svgElement.call(zoom);
     return () => {

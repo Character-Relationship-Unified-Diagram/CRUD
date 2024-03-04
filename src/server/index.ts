@@ -28,13 +28,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../assets')));
 app.use(express.static(path.join(__dirname, prod ? './' : '../../', 'dist')));
 
-app.get('*', (_req, res) => {
+app.use('/users', userRoutes);
+
+app.use('*', (_req, res) => {
+  // ../client/index.html, TESTING PURPOSES, DO NOT REMOVE PLS
+  // console.log(
+  //   path.join(__dirname, prod ? '../dist/index.html' : '../../dist/index.html'),
+  // );
   return res.sendFile(
-    path.join(__dirname, prod ? 'dist/index.html' : '../client/index.html'),
+    path.join(__dirname, prod ? '../dist/index.html' : '../../dist/index.html'),
   );
 });
-
-app.use('/users', userRoutes);
 
 app.use((_req: Request, res: Response) => res.sendStatus(404));
 

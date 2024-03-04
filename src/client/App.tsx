@@ -15,6 +15,12 @@ export const App = () => {
         nav: {
           gap: 0,
         },
+        button: {
+          boxShadow: 'md',
+        },
+        input: {
+          boxShadow: 'md',
+        },
       }),
     },
   });
@@ -22,15 +28,15 @@ export const App = () => {
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Main />}>
-            <Route
-              path="/"
-              element={
-                <AuthProvider>
-                  <Dashboard />
-                </AuthProvider>
-              }
-            />
+          <Route
+            path="/"
+            element={
+              <AuthProvider>
+                <Main />
+              </AuthProvider>
+            }
+          >
+            <Route path="/*" element={<Dashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>
