@@ -36,7 +36,7 @@ export const App = () => {
               </AuthProvider>
             }
           >
-            <Route path="/*" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Route>
         </Routes>
       </BrowserRouter>

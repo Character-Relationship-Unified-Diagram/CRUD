@@ -6,7 +6,7 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
   // Set to true to bypass authentication
-  const devBypass = true;
+  const devBypass = false;
 
   useEffect(() => {
     verifyUser();
@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }: any) => {
         .then((data) => {
           if (data) {
             setUser(data);
+            return navigate('/dashboard');
           }
         })
         .catch((err) => {
