@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Main } from './pages/Main';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { Dashboard } from './components/Dashboard';
-import { AuthProvider } from './context/ProtectedRoute';
+import { AuthProvider } from './context/Authentication';
 
 export const App = () => {
   const theme = extendTheme({
