@@ -1,17 +1,20 @@
 import { useRef, useEffect } from 'react';
 import { ResponsiveNetwork } from '@nivo/network';
 import { useSelector } from 'react-redux';
+import { useColorModeValue } from '@chakra-ui/react';
 import * as d3 from 'd3';
-import { ZoomBehavior, ZoomedElementBaseType, zoomIdentity } from 'd3-zoom';
 import './NetworkGraph.css';
 
 export const NetworkGraph = () => {
   const nodes = useSelector((state: any) => state?.main?.networkData?.nodes);
   const links = useSelector((state: any) => state?.main?.networkData?.links);
   const svgRef = useRef(null);
+  const lightGrid =
+    'linear-gradient(rgba(0, 0, 0, 0.10) 0.1em,transparent 0.1em),linear-gradient(90deg, rgba(0, 0, 0, 0.10) 0.1em, transparent 0.1em)';
+  const darkGrid =
+    'linear-gradient(rgba(255, 255, 255, 0.10) 0.1em,transparent 0.1em),linear-gradient(90deg, rgba(255, 255, 255, 0.10) 0.1em, transparent 0.1em)';
 
   if (!nodes || !links) return null;
-
   const data = {
     nodes,
     links,
@@ -36,7 +39,12 @@ export const NetworkGraph = () => {
     <div
       ref={svgRef}
       id="network-graph-container"
-      style={{ width: '100%', height: '100%', position: 'relative' }}
+      style={{
+        width: '100%',
+        height: '100%',
+        position: 'relative',
+        backgroundImage: useColorModeValue(lightGrid, darkGrid),
+      }}
     >
       <ResponsiveNetwork
         data={data}
