@@ -3,6 +3,8 @@ import { Main } from './pages/Main';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { Dashboard } from './components/Dashboard';
 import { AuthProvider } from './context/Authentication';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
 
 export const App = () => {
   const theme = extendTheme({
@@ -17,11 +19,40 @@ export const App = () => {
         },
         button: {
           boxShadow: 'md',
+          border: '1px solid black',
         },
         input: {
           boxShadow: 'md',
+          border: '1px solid',
+          borderColor: 'black',
         },
       }),
+    },
+    components: {
+      Button: {
+        baseStyle: {
+          boxShadow: 'md',
+          border: '2px solid',
+          borderColor: 'black !important',
+          _focus: { boxShadow: 'none' },
+        },
+      },
+      Input: {
+        baseStyle: {
+          field: {},
+        },
+        variants: {
+          outline: {
+            field: {
+              border: '2px solid',
+              borderColor: 'teal.500',
+              _hover: {
+                borderColor: 'teal.600',
+              },
+            },
+          },
+        },
+      },
     },
   });
   return (
@@ -36,7 +67,9 @@ export const App = () => {
               </AuthProvider>
             }
           >
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route index element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
           </Route>
         </Routes>
       </BrowserRouter>
