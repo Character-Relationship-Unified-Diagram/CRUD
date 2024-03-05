@@ -3,7 +3,7 @@ import { ResponsiveNetworkCanvas } from '@nivo/network';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import ToolTip from './ToolTip';
-
+//tool tip
 export const NetworkGraph = () => {
   const nodes = useSelector((state: any) => state.main.networkData.nodes);
   console.log('these are the nodes: ', nodes);
