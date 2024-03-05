@@ -32,8 +32,6 @@ export const App = () => {
       Button: {
         baseStyle: {
           boxShadow: 'md',
-          border: '2px solid',
-          borderColor: 'black !important',
           _focus: { boxShadow: 'none' },
         },
       },
@@ -51,6 +49,12 @@ export const App = () => {
               },
             },
           },
+        },
+      },
+      MenuItem: {
+        baseStyle: {
+          border: 'none',
+          _focus: { bg: 'gray.200' },
         },
       },
     },

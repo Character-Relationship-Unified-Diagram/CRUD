@@ -1,0 +1,17 @@
+.legend {
+  display: flex;
+  & .legend__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    & .legend__color--green {
+      background-color: #00b894;
+    }
+    & .legend__color--gray {
+      background-color: #dfe6e9;
+    }
+    & .legend__color--red {
+      background-color: #d63031;
+    }
+  }
+}
