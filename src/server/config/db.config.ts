@@ -6,6 +6,9 @@ const pool = new Pool({ connectionString: URI });
 pool.on("error", (err) => {
     console.error("Unexpected error on idle client: ", err.message);
 });
+pool.on('connect', () => {
+    console.log('Connected to PostgreSQL database');
+});
 
 interface QueryFunction {
     (text: string, params: any[], callback?: (err: Error, result: QueryResult<any>) => void): void;

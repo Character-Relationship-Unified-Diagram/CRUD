@@ -1,15 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import "dotenv/config.js";
 
 class AuthenticationController {
     public async createCookie(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('made it first line');
             if (req.cookies.SSID) res.clearCookie("SSID");
-            const user_id = res.locals.user_id;
+            const user_id = res.locals.user.user_id;
+            const username = res.locals.user.username;
 
-            const jToken = jwt.sign({ user_id }, process.env.JWT_SECRET as Secret, { expiresIn: "1h" });
+            const jToken = jwt.sign({ user_id, username }, process.env.JWT_SECRET as Secret, { expiresIn: "1h" });
 
             res.cookie("SSID", jToken, { expires: new Date(Date.now() + 600_000), httpOnly: true });
 
@@ -23,7 +23,7 @@ class AuthenticationController {
         }
     }
 
-    public async verifyCookie(req: Request, res: Response, next: NextFunction) {
+    public async authenticateUser(req: Request, res: Response, next: NextFunction) {
         try {
             const jToken = req.cookies.SSID;
 
@@ -35,15 +35,9 @@ class AuthenticationController {
                 });
             }
 
-            jwt.verify(jToken, process.env.JWT_SECRET as Secret, (err: any, _decoded: any) => {
-                if (err) {
-                    res.locals.verified = false;
-                    return next();
-                } else {
-                    res.locals.verified = true;
-                    return next();
-                }
-            });
+            const data = jwt.verify(jToken, process.env.JWT_SECRET as Secret) as JwtPayload;
+            res.locals.username = {username: data.username};
+            return next();
         } catch (error) {
             return next({
                 log: "Error occurred in verifying the cookie",
@@ -53,17 +47,14 @@ class AuthenticationController {
         }
     }
 
-    public async clearCookie(_req: Request, res: Response, next: NextFunction) {
+    public async clearCookie(req: Request, res: Response, next: NextFunction) {
         try {
-            if (res.locals.verified) {
+            const jToken = req.cookies.SSID;
+
+            if (jToken) {
                 await res.clearCookie("SSID");
-            } else {
-                return next({
-                    log: "Error occurred in clearing the cookie",
-                    status: 404,
-                    message: { error: "Error in AuthenticationController.clearCookie" },
-                }); 
             }
+            
             return next();
         } catch (error) {
             return next({

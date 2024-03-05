@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from 'bcrypt';
-// import pool from '../config/db.config';
 const pool = require('../config/db.config');
 
 class UserController {
@@ -12,7 +11,6 @@ class UserController {
 
     private async getUserByUsername(username: string) {
         const existingUser = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
-        console.log(existingUser, 'existing');
         return existingUser;
     }
 
@@ -20,7 +18,6 @@ class UserController {
         const { username, password } = req.body;
         const currentTimestamp = new Date().toISOString();
 
-        console.log('passed');
         try {
             if (!username || !password) {
                 return next({
@@ -29,12 +26,8 @@ class UserController {
                     message: { err: 'Sign Up Failed: Username or password inputs are missing' }
                 });
             }
-
-            console.log('passed1');
-            console.log('user:', username);
             
             const existingUser = await this.getUserByUsername(username);
-            console.log('passed 2');
 
             if (existingUser.rowCount >= 1) {
                 return next({
@@ -43,19 +36,14 @@ class UserController {
                     message: { err: 'User already exists. Please make a new account.' }
                 });
             }
-            console.log('passed3');
 
             const saltRound = 10;
             const salt = await bcrypt.genSalt(saltRound);
             const bcryptPass = await bcrypt.hash(password, salt);
 
-            console.log('passed4');
-
             const values = [username, bcryptPass, currentTimestamp];
             const createUsersQuery = `INSERT INTO users (username, password, created_at) VALUES ($1, $2, $3) RETURNING *`;
             const newUser = await pool.query(createUsersQuery, values);
-
-            console.log('passed5');
 
             if (newUser.rows.length === 0) {
                 return next({
@@ -64,8 +52,6 @@ class UserController {
                     message: { err: 'An error occurred in UserController.createUser' }
                 });
             }
-
-            console.log('passed6');
 
             res.locals.user = newUser;
             return next();
@@ -106,7 +92,7 @@ class UserController {
                             message: { err: 'Verification Failed: Incorrect username or password' }
                         });
                     } else {
-                        res.locals.user_id = existingUser.rows[0].user_id;
+                        res.locals.user = {user_id: existingUser.rows[0].user_id, username: existingUser.rows[0].username};
                         return next();
                     }
                 });
@@ -119,29 +105,29 @@ class UserController {
         }
     }
 
-    public async getUsers(_req: Request, res: Response, next: NextFunction) {
-        const getUsersQuery = `SELECT * FROM users`;
+    // public async getUsers(_req: Request, res: Response, next: NextFunction) {
+    //     const getUsersQuery = `SELECT * FROM users`;
 
-        try {
-            const result = await pool.query(getUsersQuery);
-            if (result.rows.length === 0) {
-                return next({
-                    log: 'No existing users',
-                    status: 404,
-                    message: { err: 'An error occurred in UserController.getUsers' },
-                });
-            }
+    //     try {
+    //         const result = await pool.query(getUsersQuery);
+    //         if (result.rows.length === 0) {
+    //             return next({
+    //                 log: 'No existing users',
+    //                 status: 404,
+    //                 message: { err: 'An error occurred in UserController.getUsers' },
+    //             });
+    //         }
 
-            res.locals.users = result.rows;
-            return next();
-        } catch (error) {
-            return next({
-                log: 'Error occured in UserController.getUsers',
-                status: 500,
-                message: { err: 'An error occurred in UserController.getUsers' },
-            });
-        }
-    }
+    //         res.locals.users = result.rows;
+    //         return next();
+    //     } catch (error) {
+    //         return next({
+    //             log: 'Error occured in UserController.getUsers',
+    //             status: 500,
+    //             message: { err: 'An error occurred in UserController.getUsers' },
+    //         });
+    //     }
+    // }
 }
 
 export default new UserController();
