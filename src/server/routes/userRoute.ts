@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import UserController from "../controllers/UserController";
+import UserController from "../controllers/userController";
 import AuthController from "../controllers/AuthController";
 
 const Router = express.Router();
@@ -9,7 +9,7 @@ Router.post("/signup", UserController.createUser, (_req: Request, res: Response)
     return res.status(200).redirect("/");
 });
 
-// returns: object {user_id (string), username (string)}
+// returns: object { user_id (string), username (string) }
 Router.post("/login", UserController.verifyUser, AuthController.createCookie, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals.user);
 });
