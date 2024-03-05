@@ -14,8 +14,8 @@ export const NetworkGraph = () => {
     <ResponsiveNetwork
       data={data}
       margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-      repulsivity={6}
-      iterations={60}
+      repulsivity={75}
+      iterations={5000}
       nodeColor={'#d3d3d3'}
       nodeBorderWidth={1}
       nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
