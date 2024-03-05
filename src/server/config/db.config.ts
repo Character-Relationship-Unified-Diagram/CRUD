@@ -3,15 +3,17 @@ import { Pool, QueryResult } from "pg";
 
 const URI = process.env.PG_URI;
 const pool = new Pool({ connectionString: URI });
-pool.on("error", (err) => {
-    console.error("Unexpected error on idle client: ", err.message);
-});
+
 pool.on('connect', () => {
     console.log('Connected to PostgreSQL database');
 });
 
+pool.on("error", (err: { message: any; }) => {
+    console.error("Unexpected error on idle client: ", err.message);
+});
+
 interface QueryFunction {
-    (text: string, params: any[], callback?: (err: Error, result: QueryResult<any>) => void): void;
+    (text: string, params: any[], callback?: (err: Error, result: QueryResult<any>) => void): Promise<any>;
 }
   
 const query: QueryFunction = async (text, params, callback) => {

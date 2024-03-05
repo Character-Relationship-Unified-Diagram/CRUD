@@ -21,6 +21,5 @@ jspm_packages/
 .env.production.local
 .env.local
 
+dist/
 package-lock.json
-
-dist/ 

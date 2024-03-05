@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import bcrypt from 'bcrypt';
-const pool = require('../config/db.config');
+import { query } from '../config/db.config';
 
 class UserController {
     constructor() {
@@ -10,7 +10,7 @@ class UserController {
     }
 
     private async getUserByUsername(username: string) {
-        const existingUser = await pool.query(`SELECT * FROM users WHERE username = $1`, [username]);
+        const existingUser = await query(`SELECT * FROM users WHERE username = $1`, [username]);
         return existingUser;
     }
 
@@ -43,7 +43,7 @@ class UserController {
 
             const values = [username, bcryptPass, currentTimestamp];
             const createUsersQuery = `INSERT INTO users (username, password, created_at) VALUES ($1, $2, $3) RETURNING *`;
-            const newUser = await pool.query(createUsersQuery, values);
+            const newUser = await query(createUsersQuery, values);
 
             if (newUser.rows.length === 0) {
                 return next({
@@ -104,30 +104,6 @@ class UserController {
             });
         }
     }
-
-    // public async getUsers(_req: Request, res: Response, next: NextFunction) {
-    //     const getUsersQuery = `SELECT * FROM users`;
-
-    //     try {
-    //         const result = await pool.query(getUsersQuery);
-    //         if (result.rows.length === 0) {
-    //             return next({
-    //                 log: 'No existing users',
-    //                 status: 404,
-    //                 message: { err: 'An error occurred in UserController.getUsers' },
-    //             });
-    //         }
-
-    //         res.locals.users = result.rows;
-    //         return next();
-    //     } catch (error) {
-    //         return next({
-    //             log: 'Error occured in UserController.getUsers',
-    //             status: 500,
-    //             message: { err: 'An error occurred in UserController.getUsers' },
-    //         });
-    //     }
-    // }
 }
 
 export default new UserController();

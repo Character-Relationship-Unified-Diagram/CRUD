@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
-import "dotenv/config.js";
 
 class AuthenticationController {
     public async createCookie(req: Request, res: Response, next: NextFunction) {
