@@ -1,12 +1,15 @@
-
-import "dotenv/config.js";
-import express, { ErrorRequestHandler, NextFunction, Request, Response } from "express";
-import path from "path";
-import cors from "cors";
-import morgan from "morgan";
-import cookieParser from "cookie-parser";
-import userRoutes from './routes/userRoute';
-
+import 'dotenv/config.js';
+import express, {
+  ErrorRequestHandler,
+  NextFunction,
+  Request,
+  Response,
+} from 'express';
+import path from 'path';
+import cors from 'cors';
+import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import userRoutes from './routes/api';
 
 const app = express();
 const port = process.env.port || 3000;
