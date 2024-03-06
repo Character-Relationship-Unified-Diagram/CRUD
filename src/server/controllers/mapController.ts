@@ -69,7 +69,7 @@ class MapController {
     }
         
     public async createCharacter(req: Request, res: Response, next: NextFunction) {
-      const { character_name, character_descriptor, faction_name, map_id } = req.body;
+      const { character_name, character_descriptor, faction_name, map_id, attr_value } = req.body;
       let faction_id;	
 
       try {
@@ -108,16 +108,54 @@ class MapController {
         INSERT INTO characters
         (character_name, faction_id, map_id, character_descriptor)
         VALUES ($1, $2, $3, $4)
-        RETURNING *
+        RETURNING character_id
       `;
 
       const values = [character_name, faction_id, map_id, character_descriptor];
-      const result = await query(createCharQuery, values);
+      const char_result = await query(createCharQuery, values);
 
-      if (result.rows.length === 0) {
+      if (char_result.rows.length === 0) {
         return next({
           log: 'Failed to create character',
           status: 401,
+          message: { err: 'An error occurred in MapController.createCharacter' }
+        });
+      }
+
+      const char_id = char_result.rows[0].character_id;
+
+      const createCharAttributes = `
+        INSERT INTO char_attributes
+        (char_id, attr_value)
+        VALUES ($1, $2)
+        RETURNING *
+      `;
+
+      const attribute_values = [char_id, attr_value];
+      const attr_result = await query(createCharAttributes, attribute_values);
+
+      if (attr_result.rows.length === 0) {
+        return next({
+          log: 'Failed to create character attributes',
+          status: 401,
+          message: { err: 'An error occurred in MapController.createCharacter' }
+        });
+      }
+
+      const gatherCharInfo = `
+        SELECT c.*, ca.attr_value
+        FROM characters c
+        LEFT JOIN char_attributes ca
+        ON c.character_id = ca.char_id
+        WHERE c.character_id = $1 AND c.map_id = $2
+      `;
+
+      const result = await query(gatherCharInfo, [char_id, map_id]);
+
+      if (result.rows.length === 0) {
+        return next({
+          log: 'Failed to get character with attributes',
+          status: 500,
           message: { err: 'An error occurred in MapController.createCharacter' }
         });
       }
@@ -140,7 +178,7 @@ class MapController {
     async updateCharacterAttribute(_req: Request, _res: Response, _next: NextFunction) {}
     
     async addCharacterRelationship(_req: Request, _res: Response, _next: NextFunction) {
-      
+
     }
     
     async editCharacterRelationship(_req: Request, _res: Response, _next: NextFunction) {}

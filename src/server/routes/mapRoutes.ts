@@ -13,7 +13,7 @@ Router.post('/create-map', mapController.createMap, (_req: Request, res: Respons
     return res.status(200).json(res.locals.map);
 });
 
-// returns: array of objects (character_id, char_name, faction_id, map_id, character_descriptior)
+// returns: array of objects (character_id, char_name, faction_id, map_id, character_descriptior, attr_value)
 Router.post('/create-character', mapController.createCharacter, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals.character);
 });
