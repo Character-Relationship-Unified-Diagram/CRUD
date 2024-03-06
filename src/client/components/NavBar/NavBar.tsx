@@ -63,7 +63,7 @@ export const NavBar = () => {
   return (
     <nav>
       <Box
-        bg="blackAlpha.200"
+        bg={useColorModeValue('blackAlpha.200', '#222533')}
         px={4}
         borderBottom={'1px solid rgba(0, 0, 0, 0.75)'}
         shadow={'md'}
