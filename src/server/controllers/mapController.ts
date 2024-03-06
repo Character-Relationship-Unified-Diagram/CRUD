@@ -16,7 +16,6 @@ class MapController {
         WHERE maps.owner_id = $1
       `;
       const userId = req.body.userId;
-      // Execute the query
       const result = await pool.query(query, [userId]);
   
     
