@@ -1,7 +1,7 @@
-import express, { Request, Response } from "express";
-import UserController from "../controllers/userController";
-import AuthController from "../controllers/AuthController";
-import MapController from "../controllers/mapController";
+import express, { Request, Response } from 'express';
+import UserController from '../controllers/userController';
+import AuthController from '../controllers/AuthController';
+import MapController from '../controllers/mapController';
 
 const Router = express.Router();
 
@@ -38,7 +38,7 @@ Router.post(
   '/logout',
   AuthController.clearCookie,
   (_req: Request, res: Response) => {
-    return res.status(200).redirect('/');
+    return res.status(200).redirect('/login');
   },
 );
 

@@ -13,16 +13,18 @@ import { PlusSquareIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { ChangeEvent, useEffect } from 'react';
 import { NewDiagram } from '../CreateNew/CreateNew';
-import { setSelectedMap } from '../../redux/mainSlice';
+import { setSelectedMap, setSelectedMapName } from '../../redux/mainSlice';
+import { RootState } from '../../redux/store';
 
 export const MapSelector = () => {
   //! set true to bypass map selector
   const devBypassMapSelector = false;
   const dispatch = useDispatch();
-  const maps = useSelector((state: any) => state.main.allMaps);
+  const maps = useSelector((state: RootState) => state.main.allMaps);
+  const user = useSelector((state: RootState) => state.main.user.username);
   const mapOptions = maps.map((map: any, indx: number) => {
     return (
-      <option value={map.map_id} key={map.map_id + indx}>
+      <option value={map.map_id + ' | ' + map.map_name} key={map.map_id + indx}>
         {map.map_name}
       </option>
     );
@@ -46,7 +48,10 @@ export const MapSelector = () => {
 
   function onSelection(e: ChangeEvent<HTMLSelectElement>) {
     if (e.target.value !== '') {
-      dispatch(setSelectedMap(e.target.value));
+      const [id, name] = e.target.value.split(' | ');
+      console.log(e.target.value.split(' | '));
+      dispatch(setSelectedMap(id));
+      dispatch(setSelectedMapName(name));
       onCloseSelection();
     }
   }
@@ -65,7 +70,7 @@ export const MapSelector = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader textAlign={'center'}>
-            Map Selector <br /> Your Maps
+            Map Selector <br /> {user}'s Maps
           </ModalHeader>
           <ModalBody>
             <Select

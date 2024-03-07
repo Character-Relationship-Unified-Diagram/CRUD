@@ -22,14 +22,16 @@ interface MapData {
 }
 
 interface MainState {
-  user: { id: string; name: string };
-  selectedMap: MapData | null;
+  user: { id: string; username: string };
+  selectedMap: '' | null;
+  selectedMapName: string | null;
   allMaps: MapData[];
 }
 
 const initialState: MainState = {
-  user: { id: '', name: '' },
+  user: { id: '', username: '' },
   selectedMap: null,
+  selectedMapName: '',
   allMaps: [{ id: '', name: '', nodes: [], links: [] }],
 };
 
@@ -43,6 +45,9 @@ export const mainSlice = createSlice({
     setSelectedMap: (state, action) => {
       state.selectedMap = action.payload;
     },
+    setSelectedMapName: (state, action) => {
+      state.selectedMapName = action.payload;
+    },
     setUser: (state, action) => {
       state.user = action.payload;
     },
@@ -53,4 +58,5 @@ export const mainSlice = createSlice({
   },
 });
 
-export const { setAllMaps, setSelectedMap, setUser, init } = mainSlice.actions;
+export const { setAllMaps, setSelectedMap, setUser, init, setSelectedMapName } =
+  mainSlice.actions;
