@@ -4,7 +4,8 @@ import mapController from '../controllers/mapController';
 const Router = express.Router();
 
 // returns: array of objects (map_id, map_name)
-Router.get('/get-maps', mapController.fetchCurrentUserMaps, (_req: Request, res: Response) => {
+// changing this to a post because a GET should not have a body
+Router.post('/get-maps', mapController.fetchCurrentUserMaps, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals.maps_info);
 });
 
@@ -18,11 +19,8 @@ Router.post('/create-character', mapController.createCharacter, (_req: Request, 
     return res.status(200).json(res.locals.character);
 });
 
-Router.patch('/update-character-attributes', mapController.updateCharacterAttribute,(_req: Request, res: Response) => {
-    return res.status(200).json(res.locals.updatedCharacter);
-} )
-
-Router.get('/getMap', mapController.getMap, (_req: Request, res: Response) => {
+// changing this to a post because a GET should not have a body
+Router.post('/getMap', mapController.getMap, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals);
 })
 
