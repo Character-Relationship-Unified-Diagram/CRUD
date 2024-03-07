@@ -20,14 +20,6 @@ class MapController {
   
         const result = await query(userMapsQuery, [user_id]);  
   
-        if (result.rows.length === 0) {
-          return next({
-            log: 'Failed to load maps from specified user',
-            status: 401,
-            message: { err: 'An error occurred in MapController.fetchCurrentUserMaps' }
-          });
-        }
-  
         const maps_info: string[] = result.rows.map((row: MapRow) => row);
   
         res.locals.maps_info = maps_info;
@@ -221,7 +213,7 @@ class MapController {
     async updateCharacterAttribute(_req: Request, _res: Response, _next: NextFunction) {}
     
     async addCharacterRelationship(req: Request, res: Response, next: NextFunction) {
-      const { map_id, char_recipient, char_sender, status_name } = req.body;
+      const { char_recipient, char_sender, status_name } = req.body;
       let status_id;
 
       // insert into status table (status name)
@@ -235,10 +227,10 @@ class MapController {
         const existingStatus = await query(checkStatusExists, [status_name]);
 
       if (existingStatus.rowCount >= 1) {
-        status_id = existingStatus.rows[0].faction_id;
+        status_id = existingStatus.rows[0].status_id;
       } else {
         const createStatusQuery = `
-          INSERT INTO factions
+          INSERT INTO statuses
           (status_name)
           VALUES ($1)
           RETURNING *
@@ -269,17 +261,38 @@ class MapController {
 
         if (charRelationResult.rows.length === 0) {
         return next({
-          log: 'Failed to get character with attributes',
+          log: 'Failed to create character relationship',
           status: 500,
-          message: { err: 'An error occurred in MapController.createCharacter' }
+          message: { err: 'An error occurred in MapController.addCharacterRelationship' }
          });
       }
-        // char_status (status_id) references status_id
-        // "char_statuses" char_sender REFERENCES "characters" ("character_id");
-        // "char_statuses" char_recipient REFERENCES "characters" ("character_id");
+    
+    const getCharRelationshipsQuery = `
+      SELECT c.*, ca."attr_value",
+      json_agg(DISTINCT jsonb_build_object('status_name', s."status_name", 'recipient', rec."character_name")) AS "statuses",
+      f."faction_name"
+      FROM "characters" c
+      LEFT JOIN "char_attributes" ca ON c."character_id" = ca."char_id"
+      LEFT JOIN "char_statuses" cs ON c."character_id" = cs."char_sender"
+      LEFT JOIN "statuses" s ON cs."status_id" = s."status_id"
+      LEFT JOIN "factions" f ON c."faction_id" = f."faction_id"
+      JOIN "characters" rec ON cs."char_recipient" = rec."character_id"
+      WHERE (c."character_id" = $1 OR c."character_id" = $2)
+      GROUP BY c."character_id", ca."attr_value", f."faction_name";
+    `;
 
+    const result = await query(getCharRelationshipsQuery, [char_sender, char_recipient]);
 
-      //out: object of the characters affected and their new relationship
+    if (result.rows.length === 0) {
+        return next({
+          log: 'Failed to get characters with relationships',
+          status: 500,
+          message: { err: 'An error occurred in MapController.addCharacterRelationship' }
+        });
+      }
+      
+      res.locals.character_statuses = result.rows;
+      return next();
       } catch (err) {
         return next({
           log: 'Error occurred in creating the character relationship and/or status',
