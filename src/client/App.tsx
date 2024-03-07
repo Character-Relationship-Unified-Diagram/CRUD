@@ -11,7 +11,7 @@ export const App = () => {
     styles: {
       global: ({ colorMode }: any) => ({
         body: {
-          bg: colorMode === 'dark' ? 'gray.900' : 'gray.200',
+          bg: colorMode === 'dark' ? '#272936' : 'gray.200',
           color: colorMode === 'dark' ? 'white' : 'black',
         },
         nav: {

@@ -4,9 +4,8 @@ import { NavBar } from '../../components/NavBar';
 export const Main = () => {
   const renderNav =
     useLocation().pathname !== '/login' && useLocation().pathname !== '/signup';
-  const login = useLocation().pathname === '/login';
-  const signup = useLocation().pathname === '/signup';
-  console.log(login);
+  // const login = useLocation().pathname === '/login';
+  // const signup = useLocation().pathname === '/signup';
   return (
     <div
       style={{

@@ -15,25 +15,30 @@ import {
 import { ArrowDownIcon } from '@chakra-ui/icons';
 import { useState, ReactNode } from 'react';
 
-const NewRelationship = () => {
+const DeleteRelationship = () => {
   return <ModalHeader>Hello Relationship</ModalHeader>;
 };
 
-const NewCharacter = () => {
+const DeleteCharacter = () => {
   return <ModalHeader>Hello Character</ModalHeader>;
 };
 
-const NewDiagram = () => {
+const DeleteDiagram = () => {
   return <ModalHeader>Hello Diagram</ModalHeader>;
 };
 
-export const CreateNew = () => {
+export const Delete = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [selection, setSelection] = useState<ReactNode | null>(null);
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ArrowDownIcon />} colorScheme='green' variant={'outline'}>
-        Create
+      <MenuButton
+        as={Button}
+        rightIcon={<ArrowDownIcon />}
+        colorScheme={'red'}
+        variant={'outline'}
+      >
+        Delete
       </MenuButton>
       <MenuList shadow={'md'} p={0} overflow={'hidden'}>
         <MenuItem
@@ -45,11 +50,11 @@ export const CreateNew = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            setSelection(<NewDiagram />);
+            setSelection(<DeleteDiagram />);
             onOpen();
           }}
         >
-          New Diagram
+          Delete Diagram
         </MenuItem>
         <MenuItem
           border={'none'}
@@ -60,11 +65,11 @@ export const CreateNew = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            setSelection(<NewRelationship />);
+            setSelection(<DeleteRelationship />);
             onOpen();
           }}
         >
-          New Relationship
+          Delete Relationship
         </MenuItem>
         <MenuItem
           border={'none'}
@@ -75,11 +80,11 @@ export const CreateNew = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            setSelection(<NewCharacter />);
+            setSelection(<DeleteCharacter />);
             onOpen();
           }}
         >
-          New Character
+          Delete Character
         </MenuItem>
       </MenuList>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>

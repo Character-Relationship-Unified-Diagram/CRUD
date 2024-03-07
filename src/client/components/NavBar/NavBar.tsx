@@ -23,6 +23,7 @@ import {
 } from '@chakra-ui/icons';
 import { useSelector } from 'react-redux';
 import { CreateNew } from '../CreateNew';
+import { Delete } from '../Delete';
 
 interface Props {
   children: React.ReactNode;
@@ -63,7 +64,7 @@ export const NavBar = () => {
   return (
     <nav>
       <Box
-        bg="blackAlpha.200"
+        bg={useColorModeValue('blackAlpha.200', '#222533')}
         px={4}
         borderBottom={'1px solid rgba(0, 0, 0, 0.75)'}
         shadow={'md'}
@@ -93,18 +94,8 @@ export const NavBar = () => {
                 </NavLink>
               ))}
             </HStack>
-            {/* <Menu>
-              <MenuButton as={Button}>
-                Legend <ArrowDownIcon />
-              </MenuButton>
-              <MenuList>
-                <MenuItem>Item 1</MenuItem>
-                <MenuItem>Item 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Item 3</MenuItem>
-              </MenuList>
-            </Menu> */}
             <CreateNew />
+            <Delete />
           </HStack>
           <Flex alignItems={'center'} gap={4}>
             <Box flexBasis={0} whiteSpace={'nowrap'}>
