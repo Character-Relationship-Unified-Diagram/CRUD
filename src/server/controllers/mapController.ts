@@ -76,22 +76,22 @@ class MapController {
         const checkFactionExists = `
         SELECT f.faction_id 
         FROM factions f
-        WHERE f.faction_name ILIKE '%' || $1 || '%';
+        WHERE f.faction_name ILIKE '%' || $1 || '%' AND f.map_id = $2;
         `;
 
-        const existingFaction = await query(checkFactionExists, [faction_name]);
+        const existingFaction = await query(checkFactionExists, [faction_name, map_id]);
 
       if (existingFaction.rowCount >= 1) {
         faction_id = existingFaction.rows[0].faction_id;
       } else {
         const createFactionQuery = `
           INSERT INTO factions
-          (faction_name)
-          VALUES ($1)
+          (faction_name, map_id)
+          VALUES ($1, $2)
           RETURNING *
         `;
 
-        const newFaction = await query(createFactionQuery, [faction_name]);
+        const newFaction = await query(createFactionQuery, [faction_name, map_id]);
 
         if (newFaction.rows.length === 0) {
           return next({
@@ -177,9 +177,74 @@ class MapController {
     
     async updateCharacterAttribute(_req: Request, _res: Response, _next: NextFunction) {}
     
-    async addCharacterRelationship(_req: Request, _res: Response, _next: NextFunction) {
+    async addCharacterRelationship(req: Request, res: Response, next: NextFunction) {
+      const { map_id, char_recipient, char_sender, status_name } = req.body;
+      let status_id;
 
-    }
+      // insert into status table (status name)
+      try {
+        const checkStatusExists = `
+        SELECT s.status_id
+        FROM statuses s
+        WHERE s.status_name ILIKE '%' || $1 || '%';
+        `;
+
+        const existingStatus = await query(checkStatusExists, [status_name]);
+
+      if (existingStatus.rowCount >= 1) {
+        status_id = existingStatus.rows[0].faction_id;
+      } else {
+        const createStatusQuery = `
+          INSERT INTO factions
+          (status_name)
+          VALUES ($1)
+          RETURNING *
+        `;
+
+        const newStatus = await query(createStatusQuery, [status_name]);
+
+        if (newStatus.rows.length === 0) {
+          return next({
+            log: 'Failed to create status for character relationship',
+            status: 401,
+            message: { err: 'An error occurred in MapController.addCharacterRelationship' }
+          });
+        }
+        status_id = newStatus.rows[0].status_id;
+      }
+
+      const createCharacterRelationshipQuery = `
+        INSERT INTO char_statuses
+        (status_id, char_sender, char_recipient)
+        VALUES ($1, $2, $3)
+        RETURNING *
+      `;
+        // insert into char status table (sender, recipient, status name)
+        const charRelationsValues = [status_id, char_sender, char_recipient];
+
+        const charRelationResult = await query(createCharacterRelationshipQuery, charRelationsValues);
+
+        if (charRelationResult.rows.length === 0) {
+        return next({
+          log: 'Failed to get character with attributes',
+          status: 500,
+          message: { err: 'An error occurred in MapController.createCharacter' }
+         });
+      }
+        // char_status (status_id) references status_id
+        // "char_statuses" char_sender REFERENCES "characters" ("character_id");
+        // "char_statuses" char_recipient REFERENCES "characters" ("character_id");
+
+
+      //out: object of the characters affected and their new relationship
+      } catch (err) {
+        return next({
+          log: 'Error occurred in creating the character relationship and/or status',
+          status: 500,
+          message: { err: `Error in MapController.addCharacterRelationship` },
+        });
+      } 
+  }
     
     async editCharacterRelationship(_req: Request, _res: Response, _next: NextFunction) {}
     
