@@ -218,7 +218,50 @@ class MapController {
     
     async deleteCharacter(_req: Request, _res: Response, _next: NextFunction) {}
     
-    async updateCharacterAttribute(_req: Request, _res: Response, _next: NextFunction) {}
+    async updateCharacterAttribute(req: Request, res: Response, next: NextFunction) {
+      try {
+          const { characterID, newAttributes, newDescriptor } = req.body;
+  
+          // update attrs
+          const updateQuery = `
+              UPDATE char_attributes
+              SET attr_value = $1
+              WHERE char_id = $2
+              RETURNING *
+          `;
+          const updateResult = await query(updateQuery, [newAttributes, characterID]);
+          //update desc
+          const updateQueryDesc = `
+          UPDATE characters
+          SET character_descriptor = $1
+          WHERE character_id = $2
+          RETURNING *
+      `;
+        const updateResult2 = await query(updateQueryDesc, [newDescriptor, characterID])
+
+          const characterQuery = `
+              SELECT c.*, ca.*
+              FROM characters c
+              LEFT JOIN char_attributes ca ON c.character_id = ca.char_id
+              WHERE c.character_id = $1
+          `;
+          const characterResult = await query(characterQuery, [characterID]);
+  
+
+          const updatedCharacter = characterResult.rows[0];
+  
+
+          res.locals.updatedCharacter = updatedCharacter;
+  
+
+          return next();
+      } catch (error) {
+          console.error('Error updating character attributes:', error);
+          return next(error);
+      }
+  }
+  
+  
     
     async addCharacterRelationship(req: Request, res: Response, next: NextFunction) {
       const { map_id, char_recipient, char_sender, status_name } = req.body;

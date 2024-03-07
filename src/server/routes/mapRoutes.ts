@@ -18,6 +18,10 @@ Router.post('/create-character', mapController.createCharacter, (_req: Request, 
     return res.status(200).json(res.locals.character);
 });
 
+Router.patch('/update-character-attributes', mapController.updateCharacterAttribute,(_req: Request, res: Response) => {
+    return res.status(200).json(res.locals.updatedCharacter);
+} )
+
 Router.get('/getMap', mapController.getMap, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals);
 })
