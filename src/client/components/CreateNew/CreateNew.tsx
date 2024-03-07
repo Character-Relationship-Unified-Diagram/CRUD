@@ -40,7 +40,7 @@ interface DiagFormData {
   
 }
 
-const NewDiagram = () => {
+export const NewDiagram = ({ cb }: { cb?: () => any }) => {
   const [ formData, setFormData ] = useState<DiagFormData>({
     diagram: ''
   })
@@ -59,7 +59,7 @@ const NewDiagram = () => {
     console.log('Diagram Creation Payload:', diagramCreationPayload);
     
     try {
-      const response = await fetch('/maps/create-character', {
+      const response = await fetch('/maps/create-map', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const NewDiagram = () => {
   );
 };
 
-const NewRelationship = () => {
+export const NewRelationship = () => {
   return <ModalHeader>Hello Relationship</ModalHeader>;
 };
 
