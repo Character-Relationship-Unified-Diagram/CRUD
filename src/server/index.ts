@@ -25,8 +25,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../assets")));
 app.use(express.static(path.join(__dirname, prod ? "./" : "../../", "dist")));
 
-app.use("/users", userRoutes);
 app.use(extractUserInfoFromToken);
+app.use("/users", userRoutes);
 app.use("/maps", mapRoutes);
 
 app.use("*", (_req, res) => {

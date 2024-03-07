@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import UserController from "../controllers/userController";
 import AuthController from "../controllers/AuthController";
+import MapController from "../controllers/mapController";
 
 const Router = express.Router();
 
@@ -15,8 +16,8 @@ Router.post("/login", UserController.verifyUser, AuthController.createCookie, (_
 });
 
 // returns: object { username (string) }
-Router.get("/verifyUser", AuthController.authenticateUser, (_req: Request, res: Response) => {
-    return res.status(200).json(res.locals.username);
+Router.get("/verifyUser", AuthController.authenticateUser, MapController.fetchCurrentUserMaps, (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals.maps_info);
 });
 
 Router.post("/logout", AuthController.clearCookie, (_req: Request, res: Response) => {
