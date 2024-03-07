@@ -1,0 +1,32 @@
+.moving-grid-bg {
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.15) 0.1em,
+      transparent 0.1em
+    ),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.15) 0.1em, transparent 0.1em);
+  background-size: 1.8em 1.8em;
+  height: 100%;
+  animation: move-background 1s linear infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .moving-grid-bg {
+    background-image: linear-gradient(
+        rgba(0, 0, 0, 0.15) 0.1em,
+        transparent 0.1em
+      ),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.15) 0.1em, transparent 0.1em);
+    background-size: 1.8em 1.8em;
+    height: 100%;
+    animation: move-background 1s linear infinite;
+  }
+}
+
+@keyframes move-background {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 1.8em 1.8em;
+  }
+}
