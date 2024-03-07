@@ -59,7 +59,10 @@ export const mainSlice = createSlice({
     setSelectedMap: (state, action) => {
       state.selectedMap = action.payload;
     },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 
-export const { setMain } = mainSlice.actions;
+export const { setMain, setAllMaps, setSelectedMap, setUser } = mainSlice.actions;

@@ -29,9 +29,9 @@ app.use('/users', userRoutes);
 
 app.use('*', (_req, res) => {
   // ../client/index.html, TESTING PURPOSES, DO NOT REMOVE PLS
-  // console.log(
-  //   path.join(__dirname, prod ? '../dist/index.html' : '../../dist/index.html'),
-  // );
+  console.log(
+    path.join(__dirname, prod ? '../dist/index.html' : '../../dist/index.html'),
+  );
   return res.sendFile(
     path.join(__dirname, prod ? '../dist/index.html' : '../../dist/index.html'),
   );

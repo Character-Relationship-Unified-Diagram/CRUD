@@ -1,12 +1,14 @@
-import { useContext, createContext, useEffect, useState } from 'react';
+import { useContext, createContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { setUser, setMain } from '../redux/mainSlice';
+import { useDispatch } from 'react-redux';
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // Set to true to bypass authentication
-  const devBypass = true;
+  const devBypass = false;
 
   useEffect(() => {
     verifyUser();
@@ -14,9 +16,9 @@ export const AuthProvider = ({ children }: any) => {
 
   function verifyUser() {
     if (devBypass) {
-      return setUser({ username: 'dev' });
+      return dispatch(setUser({ id: '', username: 'dev' }));
     } else {
-      fetch('/verifyUser', {
+      fetch('/users/verifyUser', {
         method: 'GET',
         credentials: 'include',
       })
@@ -28,8 +30,8 @@ export const AuthProvider = ({ children }: any) => {
         })
         .then((data) => {
           if (data) {
-            setUser(data);
-            return navigate('/dashboard');
+            dispatch(setUser(data));
+            return navigate('/');
           }
         })
         .catch((err) => {
@@ -40,7 +42,7 @@ export const AuthProvider = ({ children }: any) => {
   }
 
   return (
-    <AuthContext.Provider value={{ verifyUser, user }}>
+    <AuthContext.Provider value={{ verifyUser }}>
       {children}
     </AuthContext.Provider>
   );

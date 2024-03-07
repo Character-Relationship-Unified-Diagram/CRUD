@@ -58,8 +58,8 @@ const NavLink = (props: Props) => {
 export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const currentProject = useSelector((state: any) => state?.currentProject);
-  const user = useSelector((state: any) => state?.user);
+  const currentProject = useSelector((state: any) => state.main.currentProject);
+  const user = useSelector((state: any) => state.main.user.username);
 
   return (
     <nav>
@@ -102,7 +102,7 @@ export const NavBar = () => {
               {currentProject || 'Project'}
             </Box>
             <Box flexBasis={0} whiteSpace={'nowrap'}>
-              {user?.username || 'User'}
+              {user || 'User'}
             </Box>
             <Menu>
               <Button onClick={toggleColorMode} shadow={'md'}>
