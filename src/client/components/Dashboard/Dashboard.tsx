@@ -1,9 +1,10 @@
 import { NetworkGraph } from '../NetworkGraph/';
 
 export const Dashboard = () => {
+  // make fetch here
+  // format data then dispatch to redux
   return (
     <>
-      <h1>Dashboard</h1>
       <NetworkGraph />
     </>
   );
