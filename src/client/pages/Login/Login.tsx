@@ -10,21 +10,25 @@ import {
   FormLabel,
   Input,
   Button,
+  Spinner,
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { MovingGrid } from '../../components/MovingGrid';
 import { setUser } from '../../redux/mainSlice';
 import './Login.css';
+import { LoadingOverlay } from '../../components/LoadingOverlay';
 
 export const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleLogin = (e: any) => {
     e.preventDefault();
+    setLoading(true);
     fetch('/users/login', {
       method: 'POST',
       headers: {
@@ -34,6 +38,7 @@ export const Login = () => {
       credentials: 'include',
     })
       .then((res) => {
+        setLoading(false);
         if (res.status === 401) {
           console.log('Invalid username or password');
           return;
@@ -56,6 +61,7 @@ export const Login = () => {
   return (
     <>
       <MovingGrid />
+      {loading && <LoadingOverlay size={'lg'} />}
       <Modal isOpen={true} onClose={() => {}} isCentered>
         <ModalOverlay />
         <ModalContent>

@@ -1,18 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-
-export interface Node {
-  id: string;
-  height: number;
-  size: number;
-  color: string;
-}
-
-export interface Link {
-  source: string;
-  target: string;
-  distance: number;
-  status?: string;
-}
+import { Link, Node } from '../../types/data';
 
 const testmap: MapData = {
   id: 'testmap',
@@ -36,13 +23,13 @@ interface MapData {
 
 interface MainState {
   user: { id: string; name: string };
-  selectedMap: MapData;
+  selectedMap: MapData | null;
   allMaps: MapData[];
 }
 
 const initialState: MainState = {
   user: { id: '', name: '' },
-  selectedMap: testmap,
+  selectedMap: null,
   allMaps: [{ id: '', name: '', nodes: [], links: [] }],
 };
 
@@ -50,9 +37,6 @@ export const mainSlice = createSlice({
   name: 'main',
   initialState,
   reducers: {
-    setMain: (state, action) => {
-      state = action.payload;
-    },
     setAllMaps: (state, action) => {
       state.allMaps = action.payload;
     },
@@ -62,7 +46,11 @@ export const mainSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    init: (state, action) => {
+      state.user = action.payload.user;
+      state.allMaps = action.payload.allMaps;
+    },
   },
 });
 
-export const { setMain, setAllMaps, setSelectedMap, setUser } = mainSlice.actions;
+export const { setAllMaps, setSelectedMap, setUser, init } = mainSlice.actions;

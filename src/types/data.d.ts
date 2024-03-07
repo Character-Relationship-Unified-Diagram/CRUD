@@ -34,3 +34,22 @@ export interface Status {
 }
 
 export type Faction = string;
+
+export interface Node {
+  id: string;
+  height: number;
+  size: number;
+  color: string;
+  name?: string;
+  attributes?: { [key: string]: any } | null;
+  statuses?: Status[];
+  faction?: string | null;
+  description?: string | null;
+}
+
+export interface Link {
+  source: string;
+  target: string;
+  distance: number;
+  status?: string;
+}

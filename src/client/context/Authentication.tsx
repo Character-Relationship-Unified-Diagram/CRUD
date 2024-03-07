@@ -1,6 +1,6 @@
 import { useContext, createContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { setUser, setMain } from '../redux/mainSlice';
+import { init } from '../redux/mainSlice';
 import { useDispatch } from 'react-redux';
 export const AuthContext = createContext({});
 
@@ -8,15 +8,15 @@ export const AuthProvider = ({ children }: any) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // Set to true to bypass authentication
-  const devBypass = false;
+  const devBypassAuthentication = false;
 
   useEffect(() => {
     verifyUser();
   }, []);
 
   function verifyUser() {
-    if (devBypass) {
-      return dispatch(setUser({ id: '', username: 'dev' }));
+    if (devBypassAuthentication) {
+      return dispatch(init({ user: { id: '', username: 'dev' }, allMaps: [] }));
     } else {
       fetch('/users/verifyUser', {
         method: 'GET',
@@ -30,7 +30,13 @@ export const AuthProvider = ({ children }: any) => {
         })
         .then((data) => {
           if (data) {
-            dispatch(setUser(data));
+            console.log(data);
+            dispatch(
+              init({
+                user: { user_id: data.user_id, username: data.username },
+                allMaps: data.maps_info,
+              }),
+            );
             return navigate('/');
           }
         })

@@ -44,6 +44,9 @@ CREATE TABLE "users" (
 ALTER TABLE "characters"
 ADD CONSTRAINT fk_faction_id
 ADD FOREIGN KEY ("faction_id") REFERENCES "factions" ("faction_id");
+ALTER TABLE "characters"
+ADD CONSTRAINT fk_char_map_id
+ADD FOREIGN KEY ("map_id") REFERENCES "maps" ("map_id")
 ALTER TABLE "faction_statuses"
 ADD CONSTRAINT fk_faction_sender
 ADD FOREIGN KEY ("faction_sender") REFERENCES "factions" ("faction_id");

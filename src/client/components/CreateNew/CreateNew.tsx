@@ -23,8 +23,9 @@ const NewCharacter = () => {
   return <ModalHeader>Hello Character</ModalHeader>;
 };
 
-const NewDiagram = () => {
-  return <ModalHeader>Hello Diagram</ModalHeader>;
+export const NewDiagram = ({ cb }: { cb?: () => any }) => {
+  //! invoke cb when new diagram is created, this is needed because of the MapSelector Modal
+  return <ModalHeader textAlign={'center'}>Hello Diagram</ModalHeader>;
 };
 
 export const CreateNew = () => {
@@ -32,7 +33,12 @@ export const CreateNew = () => {
   const [selection, setSelection] = useState<ReactNode | null>(null);
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ArrowDownIcon />} colorScheme='green' variant={'outline'}>
+      <MenuButton
+        as={Button}
+        rightIcon={<ArrowDownIcon />}
+        colorScheme="green"
+        variant={'outline'}
+      >
         Create
       </MenuButton>
       <MenuList shadow={'md'} p={0} overflow={'hidden'}>
