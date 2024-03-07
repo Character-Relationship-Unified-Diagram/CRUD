@@ -1,22 +1,24 @@
-import { useContext, createContext, useEffect, useState } from 'react';
+import { useContext, createContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { init } from '../redux/mainSlice';
+import { useDispatch } from 'react-redux';
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // Set to true to bypass authentication
-  const devBypass = true;
+  const devBypassAuthentication = false;
 
   useEffect(() => {
     verifyUser();
   }, []);
 
   function verifyUser() {
-    if (devBypass) {
-      return setUser({ username: 'dev' });
+    if (devBypassAuthentication) {
+      return dispatch(init({ user: { id: '', username: 'dev' }, allMaps: [] }));
     } else {
-      fetch('/verifyUser', {
+      fetch('/users/verifyUser', {
         method: 'GET',
         credentials: 'include',
       })
@@ -28,8 +30,14 @@ export const AuthProvider = ({ children }: any) => {
         })
         .then((data) => {
           if (data) {
-            setUser(data);
-            return navigate('/dashboard');
+            console.log(data);
+            dispatch(
+              init({
+                user: { user_id: data.user_id, username: data.username },
+                allMaps: data.maps_info,
+              }),
+            );
+            return navigate('/');
           }
         })
         .catch((err) => {
@@ -40,7 +48,7 @@ export const AuthProvider = ({ children }: any) => {
   }
 
   return (
-    <AuthContext.Provider value={{ verifyUser, user }}>
+    <AuthContext.Provider value={{ verifyUser }}>
       {children}
     </AuthContext.Provider>
   );

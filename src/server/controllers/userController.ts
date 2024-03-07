@@ -16,8 +16,9 @@ class UserController {
 
     public async createUser(req: Request, res: Response, next: NextFunction) {
         const { username, password } = req.body;
+        console.log('req.body', req.body);
         const currentTimestamp = new Date().toISOString();
-
+        
         try {
             if (!username || !password) {
                 return next({
@@ -26,6 +27,7 @@ class UserController {
                     message: { err: 'Sign Up Failed: Username or password inputs are missing' }
                 });
             }
+            console.log('here')
             
             const existingUser = await this.getUserByUsername(username);
 
@@ -107,3 +109,4 @@ class UserController {
 }
 
 export default new UserController();
+

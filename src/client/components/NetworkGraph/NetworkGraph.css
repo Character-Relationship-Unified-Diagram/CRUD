@@ -1,21 +1,4 @@
 #network-graph-container {
-  background-image: linear-gradient(
-      rgba(0, 0, 0, 0.15) 0.1em,
-      transparent 0.1em
-    ),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.15) 0.1em, transparent 0.1em);
   background-size: 1.8em 1.8em;
   background-attachment: local;
-}
-
-@media (prefers-color-scheme: dark) {
-  #network-graph-container {
-    background-image: linear-gradient(
-        rgba(0, 0, 0, 0.15) 0.1em,
-        transparent 0.1em
-      ),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.15) 0.1em, transparent 0.1em);
-    background-size: 1.8em 1.8em;
-    background-attachment: local;
-  }
 }

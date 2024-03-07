@@ -23,6 +23,7 @@ import {
 } from '@chakra-ui/icons';
 import { useSelector } from 'react-redux';
 import { CreateNew } from '../CreateNew';
+import { Delete } from '../Delete';
 
 interface Props {
   children: React.ReactNode;
@@ -57,13 +58,13 @@ const NavLink = (props: Props) => {
 export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const currentProject = useSelector((state: any) => state?.currentProject);
-  const user = useSelector((state: any) => state?.user);
+  const currentProject = useSelector((state: any) => state.main.currentProject);
+  const user = useSelector((state: any) => state.main.user.username);
 
   return (
     <nav>
       <Box
-        bg="blackAlpha.200"
+        bg={useColorModeValue('blackAlpha.200', '#222533')}
         px={4}
         borderBottom={'1px solid rgba(0, 0, 0, 0.75)'}
         shadow={'md'}
@@ -93,25 +94,15 @@ export const NavBar = () => {
                 </NavLink>
               ))}
             </HStack>
-            {/* <Menu>
-              <MenuButton as={Button}>
-                Legend <ArrowDownIcon />
-              </MenuButton>
-              <MenuList>
-                <MenuItem>Item 1</MenuItem>
-                <MenuItem>Item 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Item 3</MenuItem>
-              </MenuList>
-            </Menu> */}
             <CreateNew />
+            <Delete />
           </HStack>
           <Flex alignItems={'center'} gap={4}>
             <Box flexBasis={0} whiteSpace={'nowrap'}>
               {currentProject || 'Project'}
             </Box>
             <Box flexBasis={0} whiteSpace={'nowrap'}>
-              {user?.username || 'User'}
+              {user || 'User'}
             </Box>
             <Menu>
               <Button onClick={toggleColorMode} shadow={'md'}>

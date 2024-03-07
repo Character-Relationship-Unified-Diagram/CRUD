@@ -255,7 +255,12 @@ export const CreateNew = () => {
   const [selection, setSelection] = useState<ReactNode | null>(null);
   return (
     <Menu>
-      <MenuButton as={Button} rightIcon={<ArrowDownIcon />}>
+      <MenuButton
+        as={Button}
+        rightIcon={<ArrowDownIcon />}
+        colorScheme="green"
+        variant={'outline'}
+      >
         Create
       </MenuButton>
       <MenuList shadow={'md'} p={0} overflow={'hidden'}>
