@@ -11,7 +11,7 @@ export const App = () => {
     styles: {
       global: ({ colorMode }: any) => ({
         body: {
-          bg: colorMode === 'dark' ? 'gray.900' : 'gray.200',
+          bg: colorMode === 'dark' ? '#272936' : 'gray.200',
           color: colorMode === 'dark' ? 'white' : 'black',
         },
         nav: {
@@ -32,8 +32,6 @@ export const App = () => {
       Button: {
         baseStyle: {
           boxShadow: 'md',
-          border: '2px solid',
-          borderColor: 'black !important',
           _focus: { boxShadow: 'none' },
         },
       },
@@ -51,6 +49,12 @@ export const App = () => {
               },
             },
           },
+        },
+      },
+      MenuItem: {
+        baseStyle: {
+          border: 'none',
+          _focus: { bg: 'gray.200' },
         },
       },
     },

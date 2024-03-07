@@ -13,7 +13,8 @@ class MapController {
         FROM maps m
         INNER JOIN users u
         ON m.owner_id = u.user_id
-        WHERE u.user_id = $1`;
+        WHERE u.user_id = $1
+        `;
   
         const user_id = req.user_id;
   

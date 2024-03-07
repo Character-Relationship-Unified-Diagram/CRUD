@@ -75,7 +75,11 @@ export const Signup = () => {
                     onChange={(e: any) => setPassword(e.target.value)}
                   />
                 </FormControl>
-                <Button width={'10rem'} type="submit">
+                <Button
+                  width={'10rem'}
+                  type="submit"
+                  border="2px solid black"
+                >
                   Signup
                 </Button>
                 <Link to="/login">Login</Link>

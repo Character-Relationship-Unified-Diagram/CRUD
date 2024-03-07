@@ -12,9 +12,18 @@ import {
   useColorModeValue,
   Stack,
   useColorMode,
+  MenuButton,
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
+import {
+  HamburgerIcon,
+  CloseIcon,
+  MoonIcon,
+  SunIcon,
+  ArrowDownIcon,
+} from '@chakra-ui/icons';
 import { useSelector } from 'react-redux';
+import { CreateNew } from '../CreateNew';
+import { Delete } from '../Delete';
 
 interface Props {
   children: React.ReactNode;
@@ -55,9 +64,9 @@ export const NavBar = () => {
   return (
     <nav>
       <Box
-        bg="blackAlpha.200"
+        bg={useColorModeValue('blackAlpha.200', '#222533')}
         px={4}
-        borderBottom={'1px solid rgba(255, 255, 255, 0.25)'}
+        borderBottom={'1px solid rgba(0, 0, 0, 0.75)'}
         shadow={'md'}
       >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
@@ -77,6 +86,7 @@ export const NavBar = () => {
               rounded={'md'}
               overflow={'hidden'}
               shadow={'md'}
+              border={'1px solid rgba(0, 0, 0, 0.75)'}
             >
               {Links.map((link) => (
                 <NavLink key={link} href={link}>
@@ -84,6 +94,8 @@ export const NavBar = () => {
                 </NavLink>
               ))}
             </HStack>
+            <CreateNew />
+            <Delete />
           </HStack>
           <Flex alignItems={'center'} gap={4}>
             <Box flexBasis={0} whiteSpace={'nowrap'}>
@@ -99,7 +111,6 @@ export const NavBar = () => {
             </Menu>
           </Flex>
         </Flex>
-
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={0}>
