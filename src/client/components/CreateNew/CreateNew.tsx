@@ -4,27 +4,201 @@ import {
   MenuList,
   MenuItem,
   Button,
+  FormLabel,
+  FormControl,
+  Input,
   Modal,
   ModalHeader,
+  ModalBody,
+  ModalFooter,
   useDisclosure,
   ModalOverlay,
   ModalContent,
   ModalCloseButton,
   useColorModeValue,
+  IconButton,
+  HStack,
 } from '@chakra-ui/react';
-import { ArrowDownIcon } from '@chakra-ui/icons';
-import { useState, ReactNode } from 'react';
+import { ArrowDownIcon, CloseIcon } from '@chakra-ui/icons';
+import { useState, ReactNode, ChangeEvent, FormEvent } from 'react';
 
 const NewRelationship = () => {
   return <ModalHeader>Hello Relationship</ModalHeader>;
 };
 
+interface Attribute {
+  key: string;
+  value: string;
+}
+
+interface FormData {
+  character: string;
+  characterAttributes: { [key: string]: string };
+  characterFaction: string;
+  characterDescriptor: string;
+}
+
 const NewCharacter = () => {
-  return <ModalHeader>Hello Character</ModalHeader>;
+  const [formData, setFormData] = useState<FormData>({
+    character: '',
+    characterAttributes: {},
+    characterFaction: '',
+    characterDescriptor: '',
+  });
+
+  const [attributes, setAttributes] = useState<Attribute[]>([{ key: '', value: '' }]);
+
+  const handleAttributeChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const newAttributes = attributes.map((attribute, i) => {
+      if (index === i) {
+        return { ...attribute, [event.target.name]: event.target.value };
+      }
+      return attribute;
+    });
+    setAttributes(newAttributes);
+    updateCharacterAttributes(newAttributes);
+  };
+
+  const updateCharacterAttributes = (attributesArray: Attribute[]) => {
+    const attributesObject: { [key: string]: string } = {};
+    attributesArray.forEach(attribute => {
+      if (attribute.key) attributesObject[attribute.key] = attribute.value;
+    });
+    setFormData({ ...formData, characterAttributes: attributesObject });
+  };
+
+  const handleAddAttribute = () => {
+    setAttributes([...attributes, { key: '', value: '' }]);
+  };
+
+  const handleRemoveAttribute = (index: number) => {
+    const filteredAttributes = attributes.filter((_, i) => i !== index);
+    setAttributes(filteredAttributes);
+    updateCharacterAttributes(filteredAttributes);
+  };
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    
+    const characterCreationPayload = {
+      ...formData,
+      characterAttributes: JSON.stringify(formData.characterAttributes),
+    };
+    
+    console.log('Character Creation Payload:', characterCreationPayload);
+    
+    try {
+      const response = await fetch('/api/characters', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(characterCreationPayload),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      console.log('Success:', result);
+
+    } catch (error) {
+      console.error('Error during character creation:', error);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+        <ModalHeader>New Character</ModalHeader>
+        <ModalBody>
+        <FormControl>
+          <FormLabel>Character Name</FormLabel>
+          <Input
+            name="character"
+            value={formData.character}
+            onChange={handleChange}
+            placeholder="Character Name"
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>Character Attributes</FormLabel>
+          {attributes.map((attribute, index) => (
+            <HStack key={index} spacing={2}>
+              <Input
+                name="key"
+                value={attribute.key}
+                placeholder="Attribute"
+                onChange={(event) => handleAttributeChange(index, event)}
+              />
+              <Input
+                name="value"
+                value={attribute.value}
+                placeholder="Value"
+                onChange={(event) => handleAttributeChange(index, event)}
+              />
+              <IconButton
+                aria-label="Remove attribute"
+                icon={<CloseIcon />}
+                onClick={() => handleRemoveAttribute(index)}
+              />
+            </HStack>
+          ))}
+          <Button mt={2} onClick={handleAddAttribute}>Add Attribute</Button>
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Character Faction</FormLabel>
+          <Input
+            name="characterFaction"
+            value={formData.characterFaction}
+            onChange={handleChange}
+            placeholder="Character Faction"
+          />
+        </FormControl>
+
+        <FormControl>
+          <FormLabel>Character Descriptor</FormLabel>
+          <Input
+            name="characterDescriptor"
+            value={formData.characterDescriptor}
+            onChange={handleChange}
+            placeholder="Character Descriptor"
+          />
+        </FormControl>
+        </ModalBody>
+        <ModalFooter>
+          <Button type="submit" colorScheme="teal" mr={3}>
+            Submit
+          </Button>
+          <Button variant="ghost">Cancel</Button>
+        </ModalFooter>
+    </form>
+  );
 };
 
-const NewDiagram = () => {
-  return <ModalHeader>Hello Diagram</ModalHeader>;
+const NewDiagram: React.FC = () => {
+  return (
+    <>
+      <ModalHeader>New Diagram</ModalHeader>
+      <ModalBody>
+        <FormControl>
+          <FormLabel>Diagram Name</FormLabel>
+          <Input placeholder="Diagram name..." />
+        </FormControl>
+      </ModalBody>
+      <ModalFooter>
+        <Button colorScheme="teal" mr={3}>
+          Save
+        </Button>
+        <Button variant="ghost">Cancel</Button>
+      </ModalFooter>
+    </>
+  );
 };
 
 export const CreateNew = () => {
