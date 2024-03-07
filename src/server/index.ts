@@ -5,7 +5,10 @@ import path from "path";
 import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
+
+import mapRoutes from './routes/mapRoutes'
 import userRoutes from './routes/userRoute';
+
 
 
 const app = express();
@@ -26,6 +29,7 @@ app.use(express.static(path.join(__dirname, '../assets')));
 app.use(express.static(path.join(__dirname, prod ? './' : '../../', 'dist')));
 
 app.use('/users', userRoutes);
+app.use('/maps', mapRoutes)
 
 app.use('*', (_req, res) => {
   // ../client/index.html, TESTING PURPOSES, DO NOT REMOVE PLS
