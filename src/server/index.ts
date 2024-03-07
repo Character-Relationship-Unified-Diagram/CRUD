@@ -5,6 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import userRoutes from './routes/api';
+import mapRoutes from './routes/mapRoutes'
 
 const app = express();
 const port = process.env.port || 3000;
@@ -28,6 +29,7 @@ app.get("/", (_req, res) => {
 });
 
 app.use('/users', userRoutes);
+app.use('/maps', mapRoutes)
 
 app.use((_req: Request, res: Response) => res.sendStatus(404));
 

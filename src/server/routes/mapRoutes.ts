@@ -7,4 +7,8 @@ Router.get('/', mapController.fetchCurrentUserMaps, (_req: Request, res: Respons
     return res.status(200).json(res.locals);
 });
 
+Router.get('/getMap', mapController.getMap, (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals);
+})
+
 export default Router;
