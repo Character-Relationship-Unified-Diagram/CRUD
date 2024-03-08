@@ -40,5 +40,9 @@ Router.get('/getPublicMap', mapController.getPublicMap, (_req: Request, res: Res
   return res.status(200).json(res.locals);
 });
 
+// returns: array of objects (character_id, character_name, faction_id, map_id, character_descriptor, attr_value, statuses [{recipient, status_name}], faction_name)
+Router.post('/create-character-relationship', mapController.addCharacterRelationship, (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals.character_statuses);
+});
 
 export default Router;
