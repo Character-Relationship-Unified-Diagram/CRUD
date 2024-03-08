@@ -169,8 +169,7 @@ class MapController {
   
       const query1 = `
         SELECT c.*, ca."attr_value", 
-        json_agg(DISTINCT jsonb_build_object('status_name', s."status_name", 'recipient', rec."character_name")) AS "statuses",
-        f."faction_name"
+        json_agg(DISTINCT jsonb_build_object('status_name', s."status_name", 'recipient', rec."character_name")) AS "statuses", f."faction_name"
         FROM "characters" c
         LEFT JOIN "char_attributes" ca ON c."character_id" = ca."char_id"
         LEFT JOIN "char_statuses" cs ON c."character_id" = cs."char_sender"
@@ -195,7 +194,8 @@ class MapController {
       res.locals.factions = factions;
 
       const query2 = `
-        SELECT fs.*, sender.faction_name AS sender_name,      recipient.faction_name AS recipient_name, s.status_name
+        SELECT fs.*, sender.faction_name AS sender_name,      
+        recipient.faction_name AS recipient_name, s.status_name
         FROM faction_statuses fs
         JOIN factions sender ON fs.faction_sender = sender.faction_id
         JOIN factions recipient ON fs.faction_recipient = recipient.faction_id
@@ -255,7 +255,7 @@ class MapController {
         VALUES ($1, $2, $3)
         RETURNING *
       `;
-      
+
         const charRelationsValues = [status_id, char_sender, char_recipient];
 
         const charRelationResult = await query(createCharacterRelationshipQuery, charRelationsValues);
