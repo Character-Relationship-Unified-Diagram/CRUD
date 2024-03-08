@@ -1,16 +1,23 @@
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { NetworkGraph } from '../NetworkGraph/';
 import { MapSelector } from '../MapSelector';
+import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
+import { useEffect } from 'react';
 
 export const Dashboard = () => {
   // make fetch here
   // format data then dispatch to redux
+  const dispatch = useDispatch();
   const selection = useSelector((state: RootState) => state.main.selectedMap);
-  console.log(selection);
+
+  useEffect(() => {
+    if (!selection) {
+      dispatch(setActiveModal(1));
+    }
+  }, [selection]);
   return (
     <>
-      {selection === null && <MapSelector />}
       <NetworkGraph />
     </>
   );

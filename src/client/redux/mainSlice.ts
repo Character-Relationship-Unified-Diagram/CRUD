@@ -26,6 +26,7 @@ interface MainState {
   selectedMap: '' | null;
   selectedMapName: string | null;
   allMaps: MapData[];
+  activeModal: number | null;
 }
 
 const initialState: MainState = {
@@ -33,6 +34,7 @@ const initialState: MainState = {
   selectedMap: null,
   selectedMapName: '',
   allMaps: [{ id: '', name: '', nodes: [], links: [] }],
+  activeModal: null,
 };
 
 export const mainSlice = createSlice({
@@ -51,6 +53,10 @@ export const mainSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
+    setActiveModal: (state, action) => {
+      console.log('Setting active modal:', action.payload);
+      state.activeModal = action.payload;
+    },
     init: (state, action) => {
       state.user = action.payload.user;
       state.allMaps = action.payload.allMaps;
@@ -58,5 +64,11 @@ export const mainSlice = createSlice({
   },
 });
 
-export const { setAllMaps, setSelectedMap, setUser, init, setSelectedMapName } =
-  mainSlice.actions;
+export const {
+  setActiveModal,
+  setAllMaps,
+  setSelectedMap,
+  setUser,
+  init,
+  setSelectedMapName,
+} = mainSlice.actions;

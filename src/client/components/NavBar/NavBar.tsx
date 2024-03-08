@@ -23,11 +23,13 @@ import {
   ArrowRightIcon,
 } from '@chakra-ui/icons';
 import { useSelector } from 'react-redux';
-import { CreateNew } from '../CreateNew';
 import { Delete } from '../Delete';
 import { useNavigate } from 'react-router';
 import { Share } from '../../pages/Share';
 import { RootState } from '../../redux/store';
+import { CreateNewButton } from '../CreateNew';
+import { MapSelectorButton } from '../MapSelector';
+// import { MapSelectorButton } from '../MapSelector/MapSelector';
 
 interface Props {
   children: React.ReactNode;
@@ -165,7 +167,8 @@ export const NavBar = () => {
               alignItems={'center'}
               display={{ base: 'none', xl: 'flex' }}
             >
-              <CreateNew />
+              <CreateNewButton />
+              <MapSelectorButton />
               <Delete />
               <Share />
             </HStack>
@@ -199,7 +202,8 @@ export const NavBar = () => {
                   </span>
                 </Text>
               </Box>
-              <CreateNew />
+              <CreateNewButton />
+              <MapSelectorButton />
               <Delete />
               <Share />
               <HStack

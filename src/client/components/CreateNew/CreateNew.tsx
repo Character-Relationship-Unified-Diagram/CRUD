@@ -19,9 +19,10 @@ import {
   IconButton,
   HStack,
 } from '@chakra-ui/react';
-import { ArrowDownIcon, CloseIcon } from '@chakra-ui/icons';
-import { useState, ReactNode, ChangeEvent, FormEvent } from 'react';
-
+import { CloseIcon, PlusSquareIcon } from '@chakra-ui/icons';
+import { useState, ReactNode, ChangeEvent, FormEvent, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setActiveModal } from '../../redux/mainSlice';
 
 interface Attribute {
   key: string;
@@ -37,13 +38,14 @@ interface CharFormData {
 
 interface DiagFormData {
   diagram: string;
-  
 }
 
-export const NewDiagram = ({ cb }: { cb?: () => any }) => {
-  const [ formData, setFormData ] = useState<DiagFormData>({
-    diagram: ''
-  })
+export const NewDiagram = () => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState<DiagFormData>({
+    diagram: '',
+  });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -51,13 +53,13 @@ export const NewDiagram = ({ cb }: { cb?: () => any }) => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     const diagramCreationPayload = {
-      ...formData
+      ...formData,
     };
-    
+
     console.log('Diagram Creation Payload:', diagramCreationPayload);
-    
+
     try {
       const response = await fetch('/maps/create-map', {
         method: 'POST',
@@ -66,48 +68,78 @@ export const NewDiagram = ({ cb }: { cb?: () => any }) => {
         },
         body: JSON.stringify(diagramCreationPayload),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const result = await response.json();
       console.log('Success:', result);
-
     } catch (error) {
       console.error('Error during diagram creation:', error);
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      onOpen();
+    }
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit}>
-      <ModalHeader>New Diagram</ModalHeader>
-      <ModalBody>
-        <FormControl>
-          <FormLabel>Diagram Name</FormLabel>
-          <Input
-            name="diagram"
-            value={formData.diagram}
-            onChange={handleChange}
-            placeholder="Diagram Name"
-          />
-        </FormControl>
-      </ModalBody>
-      <ModalFooter>
-        <Button type="submit" colorScheme="teal">
-            Submit
-        </Button>
-        {/* <Button variant="ghost">Cancel</Button> */}
-      </ModalFooter>
-    </form>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        dispatch(setActiveModal(null));
+        onClose();
+      }}
+      isCentered
+    >
+      <ModalOverlay />
+      <ModalContent>
+        <form onSubmit={handleSubmit}>
+          <ModalHeader>New Diagram</ModalHeader>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Diagram Name</FormLabel>
+              <Input
+                name="diagram"
+                value={formData.diagram}
+                onChange={handleChange}
+                placeholder="Diagram Name"
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit" colorScheme="teal">
+              Submit
+            </Button>
+          </ModalFooter>
+        </form>
+      </ModalContent>
+    </Modal>
   );
 };
 
 export const NewRelationship = () => {
-  return <ModalHeader>Hello Relationship</ModalHeader>;
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  useEffect(() => {
+    if (!isOpen) {
+      onOpen();
+    }
+  }, []);
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Hello Relationship</ModalHeader>
+      </ModalContent>
+    </Modal>
+  );
 };
 
-const NewCharacter = () => {
+export const NewCharacter = () => {
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const [formData, setFormData] = useState<CharFormData>({
     character: '',
     characterAttributes: {},
@@ -115,9 +147,14 @@ const NewCharacter = () => {
     characterDescriptor: '',
   });
 
-  const [attributes, setAttributes] = useState<Attribute[]>([{ key: '', value: '' }]);
+  const [attributes, setAttributes] = useState<Attribute[]>([
+    { key: '', value: '' },
+  ]);
 
-  const handleAttributeChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+  const handleAttributeChange = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
     const newAttributes = attributes.map((attribute, i) => {
       if (index === i) {
         return { ...attribute, [event.target.name]: event.target.value };
@@ -130,7 +167,7 @@ const NewCharacter = () => {
 
   const updateCharacterAttributes = (attributesArray: Attribute[]) => {
     const attributesObject: { [key: string]: string } = {};
-    attributesArray.forEach(attribute => {
+    attributesArray.forEach((attribute) => {
       if (attribute.key) attributesObject[attribute.key] = attribute.value;
     });
     setFormData({ ...formData, characterAttributes: attributesObject });
@@ -152,14 +189,14 @@ const NewCharacter = () => {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    
+
     const characterCreationPayload = {
       ...formData,
       characterAttributes: JSON.stringify(formData.characterAttributes),
     };
-    
+
     console.log('Character Creation Payload:', characterCreationPayload);
-    
+
     try {
       const response = await fetch('/maps/create-character', {
         method: 'POST',
@@ -168,96 +205,104 @@ const NewCharacter = () => {
         },
         body: JSON.stringify(characterCreationPayload),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const result = await response.json();
       console.log('Success:', result);
-
     } catch (error) {
       console.error('Error during character creation:', error);
     }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      onOpen();
+    }
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit}>
-        <ModalHeader>New Character</ModalHeader>
-        <ModalBody>
-        <FormControl>
-          <FormLabel>Character Name</FormLabel>
-          <Input
-            name="character"
-            value={formData.character}
-            onChange={handleChange}
-            placeholder="Character Name"
-          />
-        </FormControl>
-        <FormControl>
-          <FormLabel>Character Attributes</FormLabel>
-          {attributes.map((attribute, index) => (
-            <HStack key={index} spacing={2}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <form onSubmit={handleSubmit}>
+          <ModalHeader>New Character</ModalHeader>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Character Name</FormLabel>
               <Input
-                name="key"
-                value={attribute.key}
-                placeholder="Attribute"
-                onChange={(event) => handleAttributeChange(index, event)}
+                name="character"
+                value={formData.character}
+                onChange={handleChange}
+                placeholder="Character Name"
               />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Character Attributes</FormLabel>
+              {attributes.map((attribute, index) => (
+                <HStack key={index} spacing={2}>
+                  <Input
+                    name="key"
+                    value={attribute.key}
+                    placeholder="Attribute"
+                    onChange={(event) => handleAttributeChange(index, event)}
+                  />
+                  <Input
+                    name="value"
+                    value={attribute.value}
+                    placeholder="Value"
+                    onChange={(event) => handleAttributeChange(index, event)}
+                  />
+                  <IconButton
+                    aria-label="Remove attribute"
+                    icon={<CloseIcon />}
+                    onClick={() => handleRemoveAttribute(index)}
+                  />
+                </HStack>
+              ))}
+              <Button mt={2} onClick={handleAddAttribute}>
+                Add Attribute
+              </Button>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Character Faction</FormLabel>
               <Input
-                name="value"
-                value={attribute.value}
-                placeholder="Value"
-                onChange={(event) => handleAttributeChange(index, event)}
+                name="characterFaction"
+                value={formData.characterFaction}
+                onChange={handleChange}
+                placeholder="Character Faction"
               />
-              <IconButton
-                aria-label="Remove attribute"
-                icon={<CloseIcon />}
-                onClick={() => handleRemoveAttribute(index)}
+            </FormControl>
+            <FormControl>
+              <FormLabel>Character Descriptor</FormLabel>
+              <Input
+                name="characterDescriptor"
+                value={formData.characterDescriptor}
+                onChange={handleChange}
+                placeholder="Character Descriptor"
               />
-            </HStack>
-          ))}
-          <Button mt={2} onClick={handleAddAttribute}>Add Attribute</Button>
-        </FormControl>
-
-        <FormControl>
-          <FormLabel>Character Faction</FormLabel>
-          <Input
-            name="characterFaction"
-            value={formData.characterFaction}
-            onChange={handleChange}
-            placeholder="Character Faction"
-          />
-        </FormControl>
-
-        <FormControl>
-          <FormLabel>Character Descriptor</FormLabel>
-          <Input
-            name="characterDescriptor"
-            value={formData.characterDescriptor}
-            onChange={handleChange}
-            placeholder="Character Descriptor"
-          />
-        </FormControl>
-        </ModalBody>
-        <ModalFooter>
-          <Button type="submit" colorScheme="teal">
-            Submit
-          </Button>
-          {/* <Button variant="ghost">Cancel</Button> */}
-        </ModalFooter>
-    </form>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit" colorScheme="teal">
+              Submit
+            </Button>
+          </ModalFooter>
+        </form>
+      </ModalContent>
+    </Modal>
   );
 };
 
-export const CreateNew = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
-  const [selection, setSelection] = useState<ReactNode | null>(null);
+export const CreateNewButton = () => {
+  const dispatch = useDispatch();
   return (
     <Menu>
       <MenuButton
         as={Button}
-        rightIcon={<ArrowDownIcon />}
+        rightIcon={<PlusSquareIcon />}
         colorScheme="green"
         variant={'outline'}
       >
@@ -273,13 +318,11 @@ export const CreateNew = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            setSelection(<NewDiagram />);
-            onOpen();
+            dispatch(setActiveModal(2));
           }}
         >
           New Diagram
         </MenuItem>
-      
         <MenuItem
           border={'none'}
           shadow={'none'}
@@ -289,13 +332,11 @@ export const CreateNew = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            setSelection(<NewCharacter />);
-            onOpen();
+            dispatch(setActiveModal(6));
           }}
         >
           New Character
         </MenuItem>
-
         <MenuItem
           border={'none'}
           shadow={'none'}
@@ -305,20 +346,30 @@ export const CreateNew = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            setSelection(<NewRelationship />);
-            onOpen();
+            dispatch(setActiveModal(5));
           }}
         >
           New Relationship
         </MenuItem>
       </MenuList>
-      <Modal isOpen={isOpen} onClose={onClose} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalCloseButton onClick={onClose} />
-          {selection}
-        </ModalContent>
-      </Modal>
     </Menu>
+  );
+};
+
+export const CreateNew = ({
+  selection,
+  onClose,
+}: {
+  selection: ReactNode;
+  onClose: () => any;
+}) => {
+  return (
+    <Modal isOpen={true} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalCloseButton onClick={onClose} />
+        {selection}
+      </ModalContent>
+    </Modal>
   );
 };

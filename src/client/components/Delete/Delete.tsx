@@ -12,7 +12,7 @@ import {
   ModalCloseButton,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { ArrowDownIcon } from '@chakra-ui/icons';
+import { ArrowDownIcon, MinusIcon } from '@chakra-ui/icons';
 import { useState, ReactNode } from 'react';
 
 const DeleteRelationship = () => {
@@ -34,7 +34,7 @@ export const Delete = () => {
     <Menu>
       <MenuButton
         as={Button}
-        rightIcon={<ArrowDownIcon />}
+        rightIcon={<MinusIcon />}
         colorScheme={'red'}
         variant={'outline'}
       >
