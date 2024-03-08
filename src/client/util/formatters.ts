@@ -18,14 +18,11 @@ export const formatFactionStatuses = (
   links: Link[],
 ) => {
   for (let i = 0; i < factionStatuses.length; i++) {
-    if (
-      !factionStatuses[i].faction_sender ||
-      !factionStatuses[i].faction_recipient
-    )
+    if (!factionStatuses[i].sender_name || !factionStatuses[i].recipient_name)
       continue;
     links.push({
-      source: factionStatuses[i].faction_sender || '',
-      target: factionStatuses[i].faction_recipient || '',
+      source: factionStatuses[i].sender_name || '',
+      target: factionStatuses[i].recipient_name || '',
       distance: 100,
     });
   }
@@ -66,9 +63,10 @@ export const formatAll = (data: Data) => {
   const { factions, chars, factionStatuses } = data;
   const nodes: Node[] = [];
   const links: Link[] = [];
+  console.log(data);
   formatFactions(factions, nodes);
   //! commented for now due to a problem with the input data
-  // formatFactionStatuses(factionStatuses, links);
+  formatFactionStatuses(factionStatuses, links);
   formatCharacters(chars, links, nodes);
   return { nodes, links };
 };

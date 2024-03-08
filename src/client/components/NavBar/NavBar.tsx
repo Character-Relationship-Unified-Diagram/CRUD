@@ -7,10 +7,8 @@ import {
   Menu,
   MenuList,
   MenuItem,
-  MenuDivider,
   useDisclosure,
   useColorModeValue,
-  Stack,
   useColorMode,
   MenuButton,
   Text,
@@ -48,7 +46,6 @@ const NavLink = (props: Props) => {
       py={1}
       textAlign={'center'}
       w={'7em'}
-      // rounded={'md'}
       transition={'background-color 0.2s ease-in-out'}
       _hover={{
         textDecoration: 'none',
@@ -119,51 +116,59 @@ export const NavBar = () => {
   const user = useSelector((state: RootState) => state.main.user.username);
 
   return (
-    <nav>
+    <>
       <Box
         bg={useColorModeValue('blackAlpha.200', '#222533')}
-        px={4}
+        px={2}
         borderBottom={'1px solid rgba(0, 0, 0, 0.75)'}
         shadow={'md'}
+        as="nav"
       >
-        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+        <Flex h={16} alignItems={'center'} gap={2}>
           <IconButton
             size={'md'}
             icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
             aria-label={'Open Menu'}
-            display={{ md: 'none' }}
+            display={{ base: 'flex', xl: 'none' }}
             onClick={isOpen ? onClose : onOpen}
           />
-          <HStack spacing={8} alignItems={'center'}>
-            <HStack
-              as={'nav'}
-              spacing={0}
-              display={{ base: 'none', md: 'flex' }}
-              bg={'rgba(0, 0, 0, 0.15)'}
-              rounded={'md'}
-              overflow={'hidden'}
-              shadow={'md'}
-              border={'1px solid rgba(0, 0, 0, 0.75)'}
-            >
-              {Links.map((link) => (
-                <NavLink key={link} href={link}>
-                  {link}
-                </NavLink>
-              ))}
-            </HStack>
-            <CreateNew />
-            <Delete />
-            <Share />
+          <HStack
+            spacing={0}
+            bg={'rgba(0, 0, 0, 0.15)'}
+            rounded={'md'}
+            overflow={'hidden'}
+            shadow={'md'}
+            border={'1px solid rgba(0, 0, 0, 0.75)'}
+            display={{ base: 'none', sm: 'flex' }}
+          >
+            {Links.map((link) => (
+              <NavLink key={link} href={link}>
+                {link}
+              </NavLink>
+            ))}
           </HStack>
-          <Flex alignItems={'center'} gap={4}>
-            <Box flexBasis={0} whiteSpace={'nowrap'}>
-              <Text fontSize={'xl'}>
-                Selected Map <ArrowRightIcon />{' '}
-                <span style={{ textDecoration: 'underline' }}>
-                  {selectedMapName || 'Project'}
-                </span>
-              </Text>
-            </Box>
+          <Box
+            flexBasis={0}
+            whiteSpace={'nowrap'}
+            display={{ base: 'none', md: 'flex' }}
+          >
+            <Text fontSize={'lg'}>
+              Selected Map <ArrowRightIcon />{' '}
+              <span style={{ textDecoration: 'underline' }}>
+                {selectedMapName || 'Project'}
+              </span>
+            </Text>
+          </Box>
+          <Flex alignItems={'center'} gap={2} marginLeft={'auto'}>
+            <HStack
+              spacing={2}
+              alignItems={'center'}
+              display={{ base: 'none', xl: 'flex' }}
+            >
+              <CreateNew />
+              <Delete />
+              <Share />
+            </HStack>
             <Logout user={user} />
             <Menu>
               <Button onClick={toggleColorMode} shadow={'md'}>
@@ -173,17 +178,51 @@ export const NavBar = () => {
           </Flex>
         </Flex>
         {isOpen ? (
-          <Box pb={4} display={{ md: 'none' }}>
-            <Stack as={'nav'} spacing={0}>
-              {Links.map((link) => (
-                <NavLink key={link} href={link}>
-                  {link}
-                </NavLink>
-              ))}
-            </Stack>
-          </Box>
+          <>
+            <Box
+              pb={4}
+              display={{ base: 'flex', xl: 'none' }}
+              alignItems={'center'}
+              flexDirection={'column'}
+              margin={'auto'}
+              gap={2}
+            >
+              <Box
+                flexBasis={0}
+                whiteSpace={'nowrap'}
+                display={{ base: 'flex', md: 'none' }}
+              >
+                <Text fontSize={'xl'}>
+                  Selected Map <ArrowRightIcon />{' '}
+                  <span style={{ textDecoration: 'underline' }}>
+                    {selectedMapName || 'Project'}
+                  </span>
+                </Text>
+              </Box>
+              <CreateNew />
+              <Delete />
+              <Share />
+              <HStack
+                spacing={0}
+                bg={'rgba(0, 0, 0, 0.15)'}
+                rounded={'md'}
+                overflow={'hidden'}
+                shadow={'md'}
+                border={'1px solid rgba(0, 0, 0, 0.75)'}
+                display={{ base: 'flex', sm: 'none' }}
+                margin={'auto'}
+                width={'fit-content'}
+              >
+                {Links.map((link) => (
+                  <NavLink key={link} href={link}>
+                    {link}
+                  </NavLink>
+                ))}
+              </HStack>
+            </Box>
+          </>
         ) : null}
       </Box>
-    </nav>
+    </>
   );
 };
