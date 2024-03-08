@@ -167,17 +167,18 @@ class MapController {
     async getMap(req: Request, res: Response, next: NextFunction) {
       const { mapID } = req.body;
   
-      const query1 = `SELECT c.*, ca."attr_value", 
-          json_agg(json_build_object('status_name', s."status_name", 'recipient', rec."character_name")) AS "statuses",
-          f."faction_name"
-      FROM "characters" c
-      LEFT JOIN "char_attributes" ca ON c."character_id" = ca."char_id"
-      LEFT JOIN "char_statuses" cs ON c."character_id" = cs."char_sender"
-      LEFT JOIN "statuses" s ON cs."status_id" = s."status_id"
-      LEFT JOIN "factions" f ON c."faction_id" = f."faction_id"
-      LEFT JOIN "characters" rec ON cs."char_recipient" = rec."character_id"
-      WHERE c."map_id" = $1
-      GROUP BY c."character_id", ca."attr_value", f."faction_name";`;
+      const query1 = `
+        SELECT c.*, ca."attr_value", 
+        json_agg(DISTINCT jsonb_build_object('status_name', s."status_name", 'recipient', rec."character_name")) AS "statuses",
+        f."faction_name"
+        FROM "characters" c
+        LEFT JOIN "char_attributes" ca ON c."character_id" = ca."char_id"
+        LEFT JOIN "char_statuses" cs ON c."character_id" = cs."char_sender"
+        LEFT JOIN "statuses" s ON cs."status_id" = s."status_id"
+        LEFT JOIN "factions" f ON c."faction_id" = f."faction_id"
+        LEFT JOIN "characters" rec ON cs."char_recipient" = rec."character_id"
+        WHERE c."map_id" = $1
+        GROUP BY c."character_id", ca."attr_value", f."faction_name";`;
   
       const result = await query(query1, [mapID]);
       res.locals.chars = result.rows;
@@ -193,14 +194,15 @@ class MapController {
   
       res.locals.factions = factions;
 
-      const query2 = `SELECT fs.*, sender.faction_name AS sender_name, recipient.faction_name AS recipient_name, s.status_name
-      FROM faction_statuses fs
-      JOIN factions sender ON fs.faction_sender = sender.faction_id
-      JOIN factions recipient ON fs.faction_recipient = recipient.faction_id
-      JOIN statuses s ON fs.status_id = s.status_id
-      JOIN characters c ON sender.faction_id = c.faction_id
-      JOIN maps m ON c.map_id = m.map_id
-      WHERE m.map_id = $1;`
+      const query2 = `
+        SELECT fs.*, sender.faction_name AS sender_name,      recipient.faction_name AS recipient_name, s.status_name
+        FROM faction_statuses fs
+        JOIN factions sender ON fs.faction_sender = sender.faction_id
+        JOIN factions recipient ON fs.faction_recipient = recipient.faction_id
+        JOIN statuses s ON fs.status_id = s.status_id
+        JOIN characters c ON sender.faction_id = c.faction_id
+        JOIN maps m ON c.map_id = m.map_id
+        WHERE m.map_id = $1;`
 
       const result2 = await query(query2, [mapID]);
       res.locals.factionStatuses = result2.rows;
@@ -216,7 +218,6 @@ class MapController {
       const { char_recipient, char_sender, status_name } = req.body;
       let status_id;
 
-      // insert into status table (status name)
       try {
         const checkStatusExists = `
         SELECT s.status_id
@@ -254,7 +255,7 @@ class MapController {
         VALUES ($1, $2, $3)
         RETURNING *
       `;
-        // insert into char status table (sender, recipient, status name)
+      
         const charRelationsValues = [status_id, char_sender, char_recipient];
 
         const charRelationResult = await query(createCharacterRelationshipQuery, charRelationsValues);
