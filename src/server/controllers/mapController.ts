@@ -255,9 +255,10 @@ class MapController {
   }
 
   async getMap(req: Request, res: Response, next: NextFunction) {
+    try {
     const { mapID } = req.body;
     //! There's a very real risk of SQL injection here, just a heads up. This is due to the fact that you're passing in a raw string as the query, and then passing in the mapID as a parameter, which is coming from the request body
-
+      //query sanitization someday - AA
     const query1 = `SELECT c.*, ca."attr_value", 
           json_agg(json_build_object('status_name', s."status_name", 'recipient', rec."character_name")) AS "statuses",
           f."faction_name"
@@ -297,6 +298,11 @@ class MapController {
     res.locals.factionStatuses = result2.rows;
 
     return next();
+  }
+  catch (error) {
+    console.error("Error fetching public map:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+  }
   }
 
   async deleteCharacter(_req: Request, _res: Response, _next: NextFunction) {}
