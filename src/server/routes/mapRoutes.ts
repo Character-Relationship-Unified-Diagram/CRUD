@@ -23,7 +23,7 @@ Router.get('/getMap', mapController.getMap, (_req: Request, res: Response) => {
 });
 
 // returns: array of objects (character_id, character_name, faction_id, map_id, character_descriptor, attr_value, statuses [{recipient, status_name}], faction_name)
-Router.post('/create-char-relation', mapController.addCharacterRelationship, (_req: Request, res: Response) => {
+Router.post('/create-char-relationship', mapController.addCharacterRelationship, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals.character_statuses)
 });
 
