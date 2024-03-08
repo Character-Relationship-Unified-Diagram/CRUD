@@ -7,6 +7,9 @@
   background-size: 1.8em 1.8em;
   height: 100%;
   animation: move-background 1s linear infinite;
+  position: absolute;
+  width: 100%;
+  z-index: -1;
 }
 
 @media (prefers-color-scheme: dark) {
