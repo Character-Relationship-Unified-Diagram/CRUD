@@ -13,6 +13,7 @@ import {
   Stack,
   useColorMode,
   MenuButton,
+  Text,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
@@ -20,17 +21,22 @@ import {
   MoonIcon,
   SunIcon,
   ArrowDownIcon,
+  LockIcon,
+  ArrowRightIcon,
 } from '@chakra-ui/icons';
 import { useSelector } from 'react-redux';
 import { CreateNew } from '../CreateNew';
 import { Delete } from '../Delete';
+import { useNavigate } from 'react-router';
+import { Share } from '../../pages/Share';
+import { RootState } from '../../redux/store';
 
 interface Props {
   children: React.ReactNode;
   href: string;
 }
 
-const Links = ['Dashboard', 'Settings', 'Share'];
+const Links = ['Dashboard', 'Settings'];
 
 const NavLink = (props: Props) => {
   const { children, href } = props;
@@ -55,11 +61,62 @@ const NavLink = (props: Props) => {
   );
 };
 
+export const Logout = ({ user }: { user: string }) => {
+  const navigate = useNavigate();
+  const sendLogout = () => {
+    fetch('users/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          return navigate('/login');
+        }
+      })
+      .catch((err) => console.error(err));
+  };
+
+  return (
+    <Box flexBasis={0} whiteSpace={'nowrap'}>
+      <Menu>
+        <MenuButton
+          as={Button}
+          rightIcon={<ArrowDownIcon />}
+          shadow={'md'}
+          colorScheme="teal"
+        >
+          {user || 'User'}
+        </MenuButton>
+        <MenuList shadow={'md'} p={0} overflow={'hidden'}>
+          <MenuItem
+            border={'none'}
+            shadow={'none'}
+            transition={'background-color 0.2s ease-in-out'}
+            icon={<LockIcon />}
+            bg={useColorModeValue('blackAlpha.100', 'blackAlpha.500')}
+            _hover={{
+              bg: useColorModeValue('blackAlpha.200', 'blackAlpha.700'),
+            }}
+            onClick={sendLogout}
+          >
+            Logout
+          </MenuItem>
+        </MenuList>
+      </Menu>
+    </Box>
+  );
+};
+
 export const NavBar = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
-  const currentProject = useSelector((state: any) => state.main.currentProject);
-  const user = useSelector((state: any) => state.main.user.username);
+  const selectedMapName = useSelector(
+    (state: RootState) => state.main.selectedMapName,
+  );
+  const user = useSelector((state: RootState) => state.main.user.username);
 
   return (
     <nav>
@@ -96,14 +153,18 @@ export const NavBar = () => {
             </HStack>
             <CreateNew />
             <Delete />
+            <Share />
           </HStack>
           <Flex alignItems={'center'} gap={4}>
             <Box flexBasis={0} whiteSpace={'nowrap'}>
-              {currentProject || 'Project'}
+              <Text fontSize={'xl'}>
+                Selected Map <ArrowRightIcon />{' '}
+                <span style={{ textDecoration: 'underline' }}>
+                  {selectedMapName || 'Project'}
+                </span>
+              </Text>
             </Box>
-            <Box flexBasis={0} whiteSpace={'nowrap'}>
-              {user || 'User'}
-            </Box>
+            <Logout user={user} />
             <Menu>
               <Button onClick={toggleColorMode} shadow={'md'}>
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}

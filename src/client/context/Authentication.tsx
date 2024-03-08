@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }: any) => {
                 allMaps: data.maps_info,
               }),
             );
-            return navigate('/');
           }
         })
         .catch((err) => {
