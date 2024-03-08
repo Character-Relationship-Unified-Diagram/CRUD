@@ -10,7 +10,7 @@ import {
   Button,
   useDisclosure,
 } from '@chakra-ui/react';
-import { PlusSquareIcon } from '@chakra-ui/icons';
+import { EditIcon, PlusSquareIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setActiveModal,
@@ -23,9 +23,10 @@ export const MapSelectorButton = () => {
   const dispatch = useDispatch();
   return (
     <Button
-      colorScheme="teal"
+      colorScheme="blue"
       variant="outline"
       onClick={() => dispatch(setActiveModal(1))}
+      rightIcon={<EditIcon />}
     >
       Select Map
     </Button>

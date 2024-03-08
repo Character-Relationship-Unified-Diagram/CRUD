@@ -8,7 +8,7 @@ export const formatFactions = (factions: Faction[], nodes: Node[]) => {
       name: faction,
       color: '#d3d3d3',
       height: 100,
-      size: 100,
+      size: 35,
     });
   });
 };
@@ -23,6 +23,7 @@ export const formatFactionStatuses = (
     links.push({
       source: factionStatuses[i].sender_name || '',
       target: factionStatuses[i].recipient_name || '',
+      status: factionStatuses[i].status_name || '',
       distance: 100,
     });
   }
@@ -41,16 +42,16 @@ export const formatCharacters = (
         source: char.character_name || '',
         target: char.statuses[i].recipient || '',
         status: char.statuses[i].status_name || '',
-        distance: 100,
+        distance: 50,
       });
     }
 
     nodes.push({
       id: char.character_name,
       name: char.character_name,
-      color: '#d3d3d3',
+      color: char.attr_value?.color || '#d3d3d3',
       height: 100,
-      size: 100,
+      size: 25,
       attributes: char.attr_value,
       statuses: char.statuses,
       faction: char.faction_name,

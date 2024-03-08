@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { NavBar } from '../../components/NavBar';
 import { RootState } from '../../redux/store';
 import { MapSelector } from '../../components/MapSelector';
@@ -8,7 +8,13 @@ import {
   NewRelationship,
   NewDiagram,
 } from '../../components/CreateNew';
-import { Delete } from '../../components/Delete';
+import {
+  DeleteCharacter,
+  DeleteDiagram,
+  DeleteNew,
+  DeleteNewButton,
+  DeleteRelationship,
+} from '../../components/Delete';
 import { Share } from '../Share';
 import { useEffect, useState, ReactNode } from 'react';
 
@@ -31,7 +37,7 @@ export const Main = () => {
         setCurrentModal(<NewDiagram />);
         break;
       case 3:
-        setCurrentModal(<Delete />);
+        setCurrentModal(<DeleteCharacter />);
         break;
       case 4:
         setCurrentModal(<Share />);
@@ -42,24 +48,24 @@ export const Main = () => {
       case 6:
         setCurrentModal(<NewCharacter />);
         break;
+      case 7:
+        setCurrentModal(<DeleteRelationship />);
+        break;
+      case 8:
+        setCurrentModal(<DeleteDiagram />);
+        break;
       default:
         setCurrentModal(null);
     }
   }, [modalNum]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-      }}
-    >
+    <>
       {renderNav && <NavBar />}
       <main>
         {renderNav && currentModal}
         <Outlet />
       </main>
-    </div>
+    </>
   );
 };

@@ -1,23 +1,26 @@
 import { useRef, useEffect, useState } from 'react';
 import { ResponsiveNetwork } from '@nivo/network';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useColorModeValue } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import './NetworkGraph.css';
 import { LoadingOverlay } from '../LoadingOverlay';
 import { formatAll } from '../../util/formatters';
 import { Link, Node } from '../../../types/data';
+import { setSelectedMapData } from '../../redux/mainSlice';
 
 declare module '@nivo/network' {
   export interface InputLink {
     source: string;
     target: string;
     status?: string;
+    distance: number;
   }
 
   export interface InputNode {
     id: string;
     color: string;
+    size: number;
   }
 }
 
@@ -27,8 +30,9 @@ export const NetworkGraph = () => {
     links: Link[];
   }
   const selectedMap = useSelector((state: any) => state.main.selectedMap);
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<Data>({ nodes: [], links: [] });
+  const data = useSelector((state: any) => state.main.selectedMapData);
 
   const svgRef = useRef(null);
   const lightGrid =
@@ -62,12 +66,10 @@ export const NetworkGraph = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           setLoading(false);
-
           const { nodes, links } = formatAll(data);
-          console.log(nodes, links);
-          setData({ nodes, links });
+          // console.log(data, nodes, links);
+          dispatch(setSelectedMapData({ nodes, links }));
         })
         .catch((err) => {
           console.log(err);
@@ -91,23 +93,33 @@ export const NetworkGraph = () => {
       <ResponsiveNetwork
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+        activeNodeSize={(n) => n.size * 1.5}
         repulsivity={100}
         iterations={60}
         nodeColor={(n) => n.color}
-        nodeBorderWidth={1}
-        nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
+        nodeBorderWidth={2}
+        nodeBorderColor={{ from: 'color', modifiers: [['darker', 2.5]] }}
+        linkDistance={(n) => n.distance}
         linkThickness={3}
         linkColor={(n) => {
           const status = n.data.status?.toLowerCase();
-          if (status === 'negative') {
+          if (
+            status === 'negative' ||
+            status === 'enemies' ||
+            status === 'hostile'
+          ) {
             return 'red';
           }
-          if (status === 'positive') {
+          if (
+            status === 'positive' ||
+            status === 'friends' ||
+            status === 'allies'
+          ) {
             return 'green';
           }
           return '#d3d3d3';
         }}
-        nodeSize={15}
+        nodeSize={(n) => n.size}
         distanceMin={10}
         distanceMax={200}
         theme={{

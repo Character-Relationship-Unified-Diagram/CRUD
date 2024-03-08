@@ -12,6 +12,7 @@ import {
   useColorMode,
   MenuButton,
   Text,
+  Stack,
 } from '@chakra-ui/react';
 import {
   HamburgerIcon,
@@ -23,7 +24,7 @@ import {
   ArrowRightIcon,
 } from '@chakra-ui/icons';
 import { useSelector } from 'react-redux';
-import { Delete } from '../Delete';
+import { DeleteNewButton } from '../Delete';
 import { useNavigate } from 'react-router';
 import { Share } from '../../pages/Share';
 import { RootState } from '../../redux/store';
@@ -84,8 +85,9 @@ export const Logout = ({ user }: { user: string }) => {
         <MenuButton
           as={Button}
           rightIcon={<ArrowDownIcon />}
-          shadow={'md'}
-          colorScheme="teal"
+          shadow={'lg'}
+          colorScheme="blue"
+          variant={'outline'}
         >
           {user || 'User'}
         </MenuButton>
@@ -125,6 +127,8 @@ export const NavBar = () => {
         borderBottom={'1px solid rgba(0, 0, 0, 0.75)'}
         shadow={'md'}
         as="nav"
+        position={'sticky'}
+        zIndex={1000}
       >
         <Flex h={16} alignItems={'center'} gap={2}>
           <IconButton
@@ -156,9 +160,12 @@ export const NavBar = () => {
           >
             <Text fontSize={'lg'}>
               Selected Map <ArrowRightIcon />{' '}
-              <span style={{ textDecoration: 'underline' }}>
+              <Text
+                as={'span'}
+                color={useColorModeValue('blue.500', 'blue.200')}
+              >
                 {selectedMapName || 'Project'}
-              </span>
+              </Text>
             </Text>
           </Box>
           <Flex alignItems={'center'} gap={2} marginLeft={'auto'}>
@@ -167,9 +174,9 @@ export const NavBar = () => {
               alignItems={'center'}
               display={{ base: 'none', xl: 'flex' }}
             >
-              <CreateNewButton />
               <MapSelectorButton />
-              <Delete />
+              <CreateNewButton />
+              <DeleteNewButton />
               <Share />
             </HStack>
             <Logout user={user} />
@@ -202,10 +209,16 @@ export const NavBar = () => {
                   </span>
                 </Text>
               </Box>
-              <CreateNewButton />
-              <MapSelectorButton />
-              <Delete />
-              <Share />
+              <Box display={'flex'} gap={2}>
+                <Stack>
+                  <MapSelectorButton />
+                  <CreateNewButton />
+                </Stack>
+                <Stack>
+                  <DeleteNewButton />
+                  <Share />
+                </Stack>
+              </Box>
               <HStack
                 spacing={0}
                 bg={'rgba(0, 0, 0, 0.15)'}

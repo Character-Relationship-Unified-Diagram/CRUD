@@ -27,20 +27,26 @@ interface MainState {
   selectedMapName: string | null;
   allMaps: MapData[];
   activeModal: number | null;
+  selectedMapData: { nodes: Node[]; links: Link[] };
 }
 
 const initialState: MainState = {
   user: { id: '', username: '' },
   selectedMap: null,
   selectedMapName: '',
-  allMaps: [{ id: '', name: '', nodes: [], links: [] }],
+  allMaps: [],
   activeModal: null,
+  selectedMapData: { nodes: [], links: [] },
 };
 
 export const mainSlice = createSlice({
   name: 'main',
   initialState,
   reducers: {
+    init: (state, action) => {
+      state.user = action.payload.user;
+      state.allMaps = action.payload.allMaps;
+    },
     setAllMaps: (state, action) => {
       state.allMaps = action.payload;
     },
@@ -54,21 +60,20 @@ export const mainSlice = createSlice({
       state.user = action.payload;
     },
     setActiveModal: (state, action) => {
-      console.log('Setting active modal:', action.payload);
       state.activeModal = action.payload;
     },
-    init: (state, action) => {
-      state.user = action.payload.user;
-      state.allMaps = action.payload.allMaps;
+    setSelectedMapData: (state, action) => {
+      state.selectedMapData = action.payload;
     },
   },
 });
 
 export const {
-  setActiveModal,
-  setAllMaps,
-  setSelectedMap,
-  setUser,
   init,
+  setUser,
+  setAllMaps,
+  setActiveModal,
+  setSelectedMap,
   setSelectedMapName,
+  setSelectedMapData,
 } = mainSlice.actions;
