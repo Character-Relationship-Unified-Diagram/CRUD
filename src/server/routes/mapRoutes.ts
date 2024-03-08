@@ -49,4 +49,8 @@ Router.post('/create-character-relationship', mapController.addCharacterRelation
     return res.status(200).json(res.locals.character_statuses);
 });
 
+Router.delete('/delete-character', mapController.deleteCharacter, mapController.getMap, (_req: Request, res: Response) => {
+  return res.status(200).json(res.locals);
+})
+
 export default Router;

@@ -133,6 +133,7 @@ class MapController {
     let faction_id;
 
     try {
+
       const checkFactionExists = `
         SELECT f.faction_id 
         FROM factions f
@@ -291,12 +292,23 @@ class MapController {
     return next();
   }
   catch (error) {
-    console.error("Error fetching public map:", error);
+    console.error("Error fetching  map:", error);
         return res.status(500).json({ error: "Internal Server Error" });
     }
   }
 
-  async deleteCharacter(_req: Request, _res: Response, _next: NextFunction) {}
+  async deleteCharacter(req: Request, res: Response, next: NextFunction) {
+    const { characterID } = req.body;
+    try {
+      await query('DELETE FROM "char_statuses" WHERE "char_sender" = $1 OR "char_recipient" = $1', [characterID]);
+      await query('DELETE FROM "characters" WHERE "character_id" = $1', [characterID]);
+  
+      return next()
+    } catch (error) {
+      console.error('Error deleting character:', error);
+      res.status(500).json({ message: 'Error deleting character.' });
+    }
+  }
 
  
   async updateCharacterAttribute(req: Request, res: Response, next: NextFunction) {
@@ -349,7 +361,7 @@ class MapController {
   ) {
     const { char_recipient, char_sender, status_name } = req.body;
     let status_id;
-
+    console.log('hiiii')
       try {
         const checkStatusExists = `
         SELECT s.status_id
@@ -368,7 +380,6 @@ class MapController {
           VALUES ($1)
           RETURNING *
         `;
-
         const newStatus = await query(createStatusQuery, [status_name]);
 
         if (newStatus.rows.length === 0) {
