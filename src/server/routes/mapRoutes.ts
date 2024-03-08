@@ -12,6 +12,10 @@ Router.post(
     return res.status(200).json(res.locals.maps_info);
   },
 );
+Router.patch('/update-character-attributes', mapController.updateCharacterAttribute,(_req: Request, res: Response) => {
+  return res.status(200).json(res.locals.updatedCharacter);
+} )
+
 
 // returns: array of objects (map_id, owner_id, map_name)
 Router.post(
@@ -44,6 +48,10 @@ Router.get('/getPublicMap', mapController.getPublicMap, (_req: Request, res: Res
 Router.post('/create-character-relationship', mapController.addCharacterRelationship, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals.character_statuses);
 });
+
+Router.delete('/delete-character', mapController.deleteCharacter, mapController.getMap, (_req: Request, res: Response) => {
+  return res.status(200).json(res.locals);
+})
 
 Router.delete('/delete-character-relationship', mapController.deleteCharacterRelationship, mapController.getMap, (_req: Request, res: Response) => {
     return res.status(200).json(res.locals);
