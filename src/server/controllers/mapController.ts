@@ -460,10 +460,46 @@ class MapController {
   
 
   async deleteCharacterRelationship(
-    _req: Request,
+    req: Request,
     _res: Response,
-    _next: NextFunction,
-  ) {}
+    next: NextFunction,
+  ) {
+    const { mapID, status_name, char_sender, char_recipient } = req.body;
+
+    try {
+      const deleteCharRelationQuery = `
+      DELETE FROM char_statuses cs
+      USING statuses s, maps m
+      WHERE 
+        (cs.char_sender = $1 AND cs.char_recipient = $2)
+        OR
+        (cs.char_sender = $2 OR cs.char_recipient = $1)
+      AND s.status_name = $3
+      AND cs.status_id = s.status_id
+      AND m.map_id = $4
+      `;
+
+      const values = [char_sender, char_recipient, status_name, mapID];
+      
+      const result = await query(deleteCharRelationQuery, values);
+
+      if (result.rows.length === 0) {
+        return next({
+          log: 'Could not find existing character relationship',
+          status: 404,
+          message: { err: `Error in MapController.deleteCharacterRelationship` },
+        }); 
+      }
+
+      return next();
+    } catch (error) {
+      return next({
+        log: 'Error occurred in deleting the haracter relationship',
+        status: 500,
+        message: { err: `Error in MapController.deleteCharacterRelationship` },
+      });
+    }
+  }
 
   async addFactionRelationship(
     _req: Request,

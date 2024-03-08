@@ -53,4 +53,8 @@ Router.delete('/delete-character', mapController.deleteCharacter, mapController.
   return res.status(200).json(res.locals);
 })
 
+Router.delete('/delete-character-relationship', mapController.deleteCharacterRelationship, mapController.getMap, (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals);
+});
+
 export default Router;
