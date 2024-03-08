@@ -12,6 +12,10 @@ Router.post(
     return res.status(200).json(res.locals.maps_info);
   },
 );
+Router.patch('/update-character-attributes', mapController.updateCharacterAttribute,(_req: Request, res: Response) => {
+  return res.status(200).json(res.locals.updatedCharacter);
+} )
+
 
 // returns: array of objects (map_id, owner_id, map_name)
 Router.post(
