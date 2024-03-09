@@ -16,9 +16,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
 
-interface DiagFormData {
-  faction: string;
-}
+// interface DiagFormData {
+//   faction: string;
+// }
 
 export const NewFaction = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
