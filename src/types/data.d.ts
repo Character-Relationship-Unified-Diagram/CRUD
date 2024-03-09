@@ -24,7 +24,7 @@ export type FactionStatus = {
 
 export type Data = {
   chars: Character[];
-  factions: string[];
+  factions: Faction[];
   factionStatuses: FactionStatus[];
 };
 
@@ -33,7 +33,10 @@ export interface Status {
   recipient: string | null;
 }
 
-export type Faction = string;
+export type Faction = {
+  faction_id: string;
+  faction_name: string;
+};
 
 export interface Node {
   id: string;
@@ -45,6 +48,7 @@ export interface Node {
   statuses?: Status[];
   faction?: string | null;
   description?: string | null;
+  type?: string;
 }
 
 export interface Link {

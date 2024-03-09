@@ -26,37 +26,33 @@ export const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
-    fetch('/users/login', {
+    const res = await fetch('/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username, password }),
       credentials: 'include',
-    })
-      .then((res) => {
-        setLoading(false);
-        if (res.status === 401) {
-          console.log('Invalid username or password');
-          return;
-        } else if (res.status !== 200) {
-          console.log('An error occurred');
-          return;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        dispatch(setUser(data));
+    });
 
-        navigate('/dashboard');
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setLoading(false);
+    if (res.ok) {
+      if (res.status === 401) {
+        console.log('Invalid username or password');
+      } else if (res.status !== 200) {
+        console.log('An error occurred');
+      }
+      const data = await res.json();
+      console.log(data);
+      dispatch(setUser(data));
+      navigate('/dashboard');
+    } else {
+      setLoading(false);
+      alert('Invalid login');
+    }
   };
 
   return (

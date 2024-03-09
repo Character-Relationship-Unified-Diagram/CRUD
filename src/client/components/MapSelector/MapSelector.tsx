@@ -38,6 +38,7 @@ export const MapSelectorButton = () => {
 export const MapSelector = () => {
   const devBypassMapSelector = false;
   const dispatch = useDispatch();
+  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const maps = useSelector((state: RootState) => state.main.allMaps);
   const user = useSelector((state: RootState) => state.main.user.username);
   const {
@@ -79,6 +80,7 @@ export const MapSelector = () => {
         dispatch(setActiveModal(null));
         onCloseSelection();
       }}
+      closeOnOverlayClick={selectedMap !== null}
       isCentered
     >
       <ModalOverlay />

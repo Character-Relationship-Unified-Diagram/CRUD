@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import mapController from '../controllers/mapController';
+import { Route } from 'react-router';
 
 const Router = express.Router();
 
@@ -59,6 +60,14 @@ Router.post(
     return res.status(200).json(res.locals.character_statuses);
   },
 );
+
+Router.post('/create-faction', mapController.createFaction, (_req: Request, res: Response) => {
+  return res.status(200).json(res.locals.faction);
+});
+
+Router.post('/create-faction-relationship', mapController.addFactionRelationship, (_req: Request, res: Response) => {
+  return res.status(200).json(res.locals.faction_relationship);
+});
 
 Router.delete(
   '/delete-character',

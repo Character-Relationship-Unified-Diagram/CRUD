@@ -13,6 +13,7 @@ CREATE TABLE "char_attributes" (
 CREATE TABLE "factions" (
   "faction_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "faction_name" text UNIQUE NOT NULL
+  "map_id" uuid
 );
 CREATE TABLE "statuses" (
   "status_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),

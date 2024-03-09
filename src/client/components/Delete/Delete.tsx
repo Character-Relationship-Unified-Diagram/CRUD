@@ -18,11 +18,20 @@ import {
   useColorModeValue,
   IconButton,
   HStack,
+  Select,
 } from '@chakra-ui/react';
 import { CloseIcon, MinusIcon } from '@chakra-ui/icons';
-import { useState, ReactNode, ChangeEvent, FormEvent, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import {
+  useState,
+  ReactNode,
+  ChangeEvent,
+  FormEvent,
+  useEffect,
+  ChangeEventHandler,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
+import { RootState } from '../../redux/store';
 
 interface Attribute {
   key: string;
@@ -140,76 +149,30 @@ export const DeleteRelationship = () => {
 
 export const DeleteCharacter = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
-  const [formData, setFormData] = useState<CharFormData>({
-    character: '',
-    characterAttributes: {},
-    characterFaction: '',
-    characterDescriptor: '',
-  });
-
-  const [attributes, setAttributes] = useState<Attribute[]>([
-    { key: '', value: '' },
-  ]);
-
-  const handleAttributeChange = (
-    index: number,
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newAttributes = attributes.map((attribute, i) => {
-      if (index === i) {
-        return { ...attribute, [event.target.name]: event.target.value };
-      }
-      return attribute;
-    });
-    setAttributes(newAttributes);
-    updateCharacterAttributes(newAttributes);
-  };
-
-  const updateCharacterAttributes = (attributesArray: Attribute[]) => {
-    const attributesObject: { [key: string]: string } = {};
-    attributesArray.forEach((attribute) => {
-      if (attribute.key) attributesObject[attribute.key] = attribute.value;
-    });
-    setFormData({ ...formData, characterAttributes: attributesObject });
-  };
-
-  const handleAddAttribute = () => {
-    setAttributes([...attributes, { key: '', value: '' }]);
-  };
-
-  const handleRemoveAttribute = (index: number) => {
-    const filteredAttributes = attributes.filter((_, i) => i !== index);
-    setAttributes(filteredAttributes);
-    updateCharacterAttributes(filteredAttributes);
-  };
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
+  const [characterID, setCharacterID] = useState('');
+  const selectedMapCharacters = useSelector(
+    (state: RootState) => state.main.selectedMapCharacters,
+  );
+  const options = selectedMapCharacters.map((character) => (
+    <option key={character.character_id} value={character.character_id}>
+      {character.character_name}
+    </option>
+  ));
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const characterCreationPayload = {
-      ...formData,
-      characterAttributes: JSON.stringify(formData.characterAttributes),
-    };
-
-    console.log('Character Creation Payload:', characterCreationPayload);
-
     try {
-      const response = await fetch('/maps/create-character', {
-        method: 'POST',
+      const response = await fetch('/maps/delete-character', {
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(characterCreationPayload),
+        body: JSON.stringify({ characterID }),
       });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const result = await response.json();
       console.log('Success:', result);
     } catch (error) {
@@ -232,57 +195,15 @@ export const DeleteCharacter = () => {
           <ModalBody>
             <FormControl>
               <FormLabel>Character Name</FormLabel>
-              <Input
+              <Select
                 name="character"
-                value={formData.character}
-                onChange={handleChange}
                 placeholder="Character Name"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Character Attributes</FormLabel>
-              {attributes.map((attribute, index) => (
-                <HStack key={index} spacing={2}>
-                  <Input
-                    name="key"
-                    value={attribute.key}
-                    placeholder="Attribute"
-                    onChange={(event) => handleAttributeChange(index, event)}
-                  />
-                  <Input
-                    name="value"
-                    value={attribute.value}
-                    placeholder="Value"
-                    onChange={(event) => handleAttributeChange(index, event)}
-                  />
-                  <IconButton
-                    aria-label="Remove attribute"
-                    icon={<CloseIcon />}
-                    onClick={() => handleRemoveAttribute(index)}
-                  />
-                </HStack>
-              ))}
-              <Button mt={2} onClick={handleAddAttribute}>
-                Add Attribute
-              </Button>
-            </FormControl>
-            <FormControl>
-              <FormLabel>Character Faction</FormLabel>
-              <Input
-                name="characterFaction"
-                value={formData.characterFaction}
-                onChange={handleChange}
-                placeholder="Character Faction"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Character Descriptor</FormLabel>
-              <Input
-                name="characterDescriptor"
-                value={formData.characterDescriptor}
-                onChange={handleChange}
-                placeholder="Character Descriptor"
-              />
+                onChange={(event) => {
+                  setCharacterID(event.target.value);
+                }}
+              >
+                {options}
+              </Select>
             </FormControl>
           </ModalBody>
           <ModalFooter>
@@ -350,6 +271,20 @@ export const DeleteNewButton = () => {
           }}
         >
           Delete Relationship
+        </MenuItem>
+        <MenuItem
+          border={'none'}
+          shadow={'none'}
+          transition={'background-color 0.2s ease-in-out'}
+          _hover={{
+            textDecoration: 'none',
+            bg: useColorModeValue('gray.200', 'gray.700'),
+          }}
+          onClick={() => {
+            dispatch(setActiveModal(0)); // TODO: change to delete faction
+          }}
+        >
+          Delete Faction
         </MenuItem>
       </MenuList>
     </Menu>

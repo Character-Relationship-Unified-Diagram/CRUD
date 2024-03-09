@@ -1,13 +1,16 @@
 import { useRef, useEffect, useState } from 'react';
 import { ResponsiveNetwork } from '@nivo/network';
+import { Node } from '../../../types/data';
 import { useDispatch, useSelector } from 'react-redux';
-import { useColorModeValue } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import * as d3 from 'd3';
 import './NetworkGraph.css';
 import { LoadingOverlay } from '../LoadingOverlay';
 import { formatAll } from '../../util/formatters';
-import { Link, Node } from '../../../types/data';
-import { setSelectedMapData } from '../../redux/mainSlice';
+import {
+  setAllSelectedMapData,
+  setSelectedMapData,
+} from '../../redux/mainSlice';
 
 declare module '@nivo/network' {
   export interface InputLink {
@@ -21,14 +24,26 @@ declare module '@nivo/network' {
     id: string;
     color: string;
     size: number;
+    description?: string;
+    name: string;
+    type: string;
+  }
+
+  export interface NodeTooltipProps<Node extends InputNode> {
+    id: string;
+    description?: string;
+    name: string;
+    color: string;
+    size: number;
+    value: number;
   }
 }
 
-export const NetworkGraph = () => {
-  interface Data {
-    nodes: Node[];
-    links: Link[];
-  }
+interface NetworkGraphProps {
+  readOnlyMode?: boolean;
+}
+
+export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
   const selectedMap = useSelector((state: any) => state.main.selectedMap);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -54,7 +69,7 @@ export const NetworkGraph = () => {
   }, []); // empty dependency array to run the effect only once
 
   useEffect(() => {
-    if (selectedMap) {
+    if (selectedMap && !readOnlyMode) {
       setLoading(true);
       fetch('/maps/getMap', {
         method: 'POST',
@@ -67,9 +82,67 @@ export const NetworkGraph = () => {
         .then((res) => res.json())
         .then((data) => {
           setLoading(false);
-          const { nodes, links } = formatAll(data);
+          const {
+            nodes,
+            links,
+            factions,
+            characters,
+            charRelationships,
+            factionRelationships,
+          } = formatAll(data);
+
           // console.log(data, nodes, links);
+
+          dispatch(setAllSelectedMapData(data));
           dispatch(setSelectedMapData({ nodes, links }));
+          dispatch(
+            setAllSelectedMapData({
+              factions,
+              characters,
+              charRelationships,
+              factionRelationships,
+            }),
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } else if (!selectedMap && readOnlyMode) {
+      const queryParams = new URLSearchParams(location.search);
+      // Getting the value of a specific query parameter
+      const parameterValue = queryParams.get('pubID');
+      // console.log('parameterValue', parameterValue);
+      fetch(`/maps/getPublicMap?pubID=${parameterValue}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setLoading(false);
+          const {
+            nodes,
+            links,
+            factions,
+            characters,
+            charRelationships,
+            factionRelationships,
+          } = formatAll(data);
+
+          // console.log(data, nodes, links);
+
+          dispatch(setAllSelectedMapData(data));
+          dispatch(setSelectedMapData({ nodes, links }));
+          dispatch(
+            setAllSelectedMapData({
+              factions,
+              characters,
+              charRelationships,
+              factionRelationships,
+            }),
+          );
         })
         .catch((err) => {
           console.log(err);
@@ -122,12 +195,14 @@ export const NetworkGraph = () => {
         nodeSize={(n) => n.size}
         distanceMin={10}
         distanceMax={200}
-        theme={{
-          tooltip: {
-            container: {
-              background: '#333',
-            },
-          },
+        nodeTooltip={(e) => {
+          console.log(e);
+          return (
+            <Box bg={useColorModeValue('white', 'gray.800')} p={5} rounded='1rem'>
+              Name: <strong>{e.node.data.name}</strong><br />
+              Type: <strong>{e.node.data.type}</strong><br />
+            </Box>
+          );
         }}
       />
     </div>

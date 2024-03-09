@@ -7,6 +7,7 @@ import {
   NewCharacter,
   NewRelationship,
   NewDiagram,
+  NewFaction,
 } from '../../components/CreateNew';
 import {
   DeleteCharacter,
@@ -15,15 +16,18 @@ import {
   DeleteNewButton,
   DeleteRelationship,
 } from '../../components/Delete';
-import { Share } from '../Share';
+import { Share } from '../../components/Share';
 import { useEffect, useState, ReactNode } from 'react';
+import { ShareModal } from '../../components/Share/Share';
 
 export const Main = () => {
   const renderNav =
-    useLocation().pathname !== '/login' && useLocation().pathname !== '/signup';
-  const [currentModal, setCurrentModal] = useState<ReactNode | null>(null);
+    useLocation().pathname !== '/login' &&
+    useLocation().pathname !== '/signup' &&
+    useLocation().pathname !== '/view';
   const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const modalNum = useSelector((state: RootState) => state.main.activeModal);
+  const [currentModal, setCurrentModal] = useState<ReactNode | null>(null);
 
   useEffect(() => {
     if (!selectedMap) {
@@ -40,7 +44,7 @@ export const Main = () => {
         setCurrentModal(<DeleteCharacter />);
         break;
       case 4:
-        setCurrentModal(<Share />);
+        setCurrentModal(<ShareModal />);
         break;
       case 5:
         setCurrentModal(<NewRelationship />);
@@ -53,6 +57,9 @@ export const Main = () => {
         break;
       case 8:
         setCurrentModal(<DeleteDiagram />);
+        break;
+      case 9:
+        setCurrentModal(<NewFaction />);
         break;
       default:
         setCurrentModal(null);

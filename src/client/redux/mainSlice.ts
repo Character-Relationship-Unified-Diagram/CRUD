@@ -1,18 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Link, Node } from '../../types/data';
-
-const testmap: MapData = {
-  id: 'testmap',
-  name: 'Test Map',
-  nodes: [
-    { id: 'node1', height: 20, size: 20, color: '#d3d3d3' },
-    { id: 'node2', height: 20, size: 20, color: '#d3d3d3' },
-  ],
-  links: [
-    { source: 'node1', target: 'node2', distance: 100, status: 'positive' },
-    { source: 'node2', target: 'node1', distance: 100, status: 'positive' },
-  ],
-};
+import { Character, Faction, Link, Node } from '../../types/data';
 
 interface MapData {
   id: string;
@@ -28,6 +15,10 @@ interface MainState {
   allMaps: MapData[];
   activeModal: number | null;
   selectedMapData: { nodes: Node[]; links: Link[] };
+  selectedMapCharacters: Character[];
+  selectedMapFactions: Faction[];
+  selectedMapCharRelationships: Link[];
+  selectedMapFactionRelationships: Link[];
 }
 
 const initialState: MainState = {
@@ -37,6 +28,10 @@ const initialState: MainState = {
   allMaps: [],
   activeModal: null,
   selectedMapData: { nodes: [], links: [] },
+  selectedMapCharacters: [],
+  selectedMapFactions: [],
+  selectedMapCharRelationships: [],
+  selectedMapFactionRelationships: [],
 };
 
 export const mainSlice = createSlice({
@@ -46,6 +41,18 @@ export const mainSlice = createSlice({
     init: (state, action) => {
       state.user = action.payload.user;
       state.allMaps = action.payload.allMaps;
+    },
+    clearState: (state) => {
+      state.user = { id: '', username: '' };
+      state.selectedMap = null;
+      state.selectedMapName = null;
+      state.allMaps = [];
+      state.activeModal = null;
+      state.selectedMapData = { nodes: [], links: [] };
+      state.selectedMapCharacters = [];
+      state.selectedMapFactions = [];
+      state.selectedMapCharRelationships = [];
+      state.selectedMapFactionRelationships = [];
     },
     setAllMaps: (state, action) => {
       state.allMaps = action.payload;
@@ -65,6 +72,13 @@ export const mainSlice = createSlice({
     setSelectedMapData: (state, action) => {
       state.selectedMapData = action.payload;
     },
+    setAllSelectedMapData: (state, action) => {
+      state.selectedMapCharacters = action.payload.characters;
+      state.selectedMapFactions = action.payload.factions;
+      state.selectedMapCharRelationships = action.payload.charRelationships;
+      state.selectedMapFactionRelationships =
+        action.payload.factionRelationships;
+    },
   },
 });
 
@@ -72,8 +86,10 @@ export const {
   init,
   setUser,
   setAllMaps,
+  clearState,
   setActiveModal,
   setSelectedMap,
   setSelectedMapName,
   setSelectedMapData,
+  setAllSelectedMapData,
 } = mainSlice.actions;
