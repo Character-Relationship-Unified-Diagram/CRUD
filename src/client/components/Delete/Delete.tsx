@@ -16,38 +16,29 @@ import {
   ModalContent,
   ModalCloseButton,
   useColorModeValue,
-  IconButton,
-  HStack,
   Select,
 } from '@chakra-ui/react';
-import { CloseIcon, MinusIcon } from '@chakra-ui/icons';
-import {
-  useState,
-  ReactNode,
-  ChangeEvent,
-  FormEvent,
-  useEffect,
-  ChangeEventHandler,
-} from 'react';
+import { MinusIcon } from '@chakra-ui/icons';
+import { useState, ReactNode, FormEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
 
-interface Attribute {
-  key: string;
-  value: string;
-}
+// interface Attribute {
+//   key: string;
+//   value: string;
+// }
 
-interface CharFormData {
-  character: string;
-  characterAttributes: { [key: string]: string };
-  characterFaction: string;
-  characterDescriptor: string;
-}
+// interface CharFormData {
+//   character: string;
+//   characterAttributes: { [key: string]: string };
+//   characterFaction: string;
+//   characterDescriptor: string;
+// }
 
-interface DiagFormData {
-  diagram: string;
-}
+// interface DiagFormData {
+//   diagram: string;
+// }
 
 export const DeleteDiagram = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -213,6 +204,76 @@ export const DeleteCharacter = () => {
   );
 };
 
+export const DeleteFaction = () => {
+  const allFactions = useSelector(
+    (state: RootState) => state.main.selectedMapFactions,
+  );
+  const { isOpen, onClose, onOpen } = useDisclosure();
+  const [factionID, setFactionID] = useState('');
+  const options = allFactions.map((faction) => (
+    <option key={faction.faction_id} value={faction.faction_id}>
+      {faction.faction_name}
+    </option>
+  ));
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      const response = await fetch('/maps/delete-faction', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ faction_id: factionID }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Success:', result);
+    } catch (error) {
+      console.error('Error during faction creation:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (!isOpen) {
+      onOpen();
+    }
+  }, []);
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <form onSubmit={handleSubmit}>
+          <ModalHeader>Delete Faction</ModalHeader>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Faction Name</FormLabel>
+              <Select
+                name="faction"
+                placeholder="Faction Name"
+                onChange={(event) => {
+                  setFactionID(event.target.value);
+                }}
+              >
+                {options}
+              </Select>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit" colorScheme="teal">
+              Submit
+            </Button>
+          </ModalFooter>
+        </form>
+      </ModalContent>
+    </Modal>
+  );
+};
+
 export const DeleteNewButton = () => {
   const dispatch = useDispatch();
   return (
@@ -277,7 +338,7 @@ export const DeleteNewButton = () => {
             bg: useColorModeValue('gray.200', 'gray.700'),
           }}
           onClick={() => {
-            dispatch(setActiveModal(0)); // TODO: change to delete faction
+            dispatch(setActiveModal(10));
           }}
         >
           Delete Faction

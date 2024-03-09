@@ -12,19 +12,18 @@ import {
 import {
   DeleteCharacter,
   DeleteDiagram,
-  DeleteNew,
-  DeleteNewButton,
   DeleteRelationship,
 } from '../../components/Delete';
-import { Share } from '../../components/Share';
 import { useEffect, useState, ReactNode } from 'react';
 import { ShareModal } from '../../components/Share/Share';
+import { DeleteFaction } from '../../components/Delete/Delete';
 
 export const Main = () => {
+  const location = useLocation();
   const renderNav =
-    useLocation().pathname !== '/login' &&
-    useLocation().pathname !== '/signup' &&
-    useLocation().pathname !== '/view';
+    location.pathname !== '/login' &&
+    location.pathname !== '/signup' &&
+    location.pathname !== '/view';
   const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const modalNum = useSelector((state: RootState) => state.main.activeModal);
   const [currentModal, setCurrentModal] = useState<ReactNode | null>(null);
@@ -61,8 +60,12 @@ export const Main = () => {
       case 9:
         setCurrentModal(<NewFaction />);
         break;
+      case 10:
+        setCurrentModal(<DeleteFaction />);
+        break;
       default:
         setCurrentModal(null);
+        break;
     }
   }, [modalNum]);
 

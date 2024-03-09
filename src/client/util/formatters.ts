@@ -29,7 +29,7 @@ export const formatFactionStatuses = (
       source: factionStatuses[i].faction_sender,
       target: factionStatuses[i].faction_recipient,
       status: factionStatuses[i].status_name,
-      distance: 100,
+      distance: 200,
     });
   }
 
@@ -50,14 +50,14 @@ export const formatCharacters = (
         source: char.character_name || '',
         target: char.statuses[i].recipient || '',
         status: char.statuses[i].status_name || '',
-        distance: 50,
+        distance: 150,
       });
 
       allCharacterRelations.push({
         source: char.character_name || '',
         target: char.statuses[i].recipient || '',
         status: char.statuses[i].status_name || '',
-        distance: 50,
+        distance: 150,
       });
     }
 
@@ -66,7 +66,7 @@ export const formatCharacters = (
         source: char.character_name,
         target: char.faction_id,
         status: 'positive',
-        distance: 50,
+        distance: 150,
       });
     }
 

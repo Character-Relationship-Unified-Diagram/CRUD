@@ -19,6 +19,8 @@ import { RootState } from '../../redux/store';
 export const CreateNewButton = () => {
   const dispatch = useDispatch();
   const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
+  const color = useColorModeValue('gray.200', 'gray.700');
+
   const options = selectedMap ? (
     <>
       <MenuItem
@@ -27,7 +29,7 @@ export const CreateNewButton = () => {
         transition={'background-color 0.2s ease-in-out'}
         _hover={{
           textDecoration: 'none',
-          bg: useColorModeValue('gray.200', 'gray.700'),
+          bg: color,
         }}
         onClick={() => {
           dispatch(setActiveModal(2));
@@ -41,7 +43,7 @@ export const CreateNewButton = () => {
         transition={'background-color 0.2s ease-in-out'}
         _hover={{
           textDecoration: 'none',
-          bg: useColorModeValue('gray.200', 'gray.700'),
+          bg: color,
         }}
         onClick={() => {
           dispatch(setActiveModal(6));
@@ -55,7 +57,7 @@ export const CreateNewButton = () => {
         transition={'background-color 0.2s ease-in-out'}
         _hover={{
           textDecoration: 'none',
-          bg: useColorModeValue('gray.200', 'gray.700'),
+          bg: color,
         }}
         onClick={() => {
           dispatch(setActiveModal(5));
@@ -69,7 +71,7 @@ export const CreateNewButton = () => {
         transition={'background-color 0.2s ease-in-out'}
         _hover={{
           textDecoration: 'none',
-          bg: useColorModeValue('gray.200', 'gray.700'),
+          bg: color,
         }}
         onClick={() => {
           dispatch(setActiveModal(9));
@@ -85,7 +87,7 @@ export const CreateNewButton = () => {
       transition={'background-color 0.2s ease-in-out'}
       _hover={{
         textDecoration: 'none',
-        bg: useColorModeValue('gray.200', 'gray.700'),
+        bg: color,
       }}
       onClick={() => {
         dispatch(setActiveModal(2));
