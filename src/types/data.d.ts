@@ -56,4 +56,6 @@ export interface Link {
   target: string;
   distance: number;
   status?: string;
+  sender_id?: string;
+  recipient_id?: string;
 }

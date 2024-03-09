@@ -23,6 +23,7 @@ import { useState, ReactNode, FormEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
+import { Link } from '../../../types/data';
 
 // interface Attribute {
 //   key: string;
@@ -116,9 +117,49 @@ export const DeleteDiagram = () => {
     </Modal>
   );
 };
-
+// add map_id to factions
 export const DeleteRelationship = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const [selectedRel, setSelectedRel] = useState({
+    char_sender: '',
+    char_recipient: '',
+    status_name: '',
+  });
+  const selectedMapRelationships = useSelector(
+    (state: RootState) => state.main.selectedMapCharRelationships,
+  );
+  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
+  const options = selectedMapRelationships.map((relationship) => (
+    <option
+      key={relationship.sender_id}
+      value={`${relationship.sender_id} ${relationship.recipient_id} ${relationship.status}`}
+    >
+      {relationship.source + ' -> ' + relationship.target}
+    </option>
+  ));
+
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log(selectedRel);
+    try {
+      const response = await fetch('/maps/delete-character-relationship', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...selectedRel, mapID: selectedMap }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Success:', result);
+    } catch (error) {
+      console.error('Error during character creation:', error);
+    }
+  };
+
   useEffect(() => {
     if (!isOpen) {
       onOpen();
@@ -129,6 +170,29 @@ export const DeleteRelationship = () => {
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Delete Relationship</ModalHeader>
+        <form onSubmit={onSubmit}>
+          <ModalBody>
+            <FormControl>
+              <FormLabel>Relationship</FormLabel>
+              <Select
+                name="relationship"
+                placeholder="Relationship"
+                onChange={(event) => {
+                  const [char_sender, char_recipient, status_name] =
+                    event.target.value.split(' ');
+                  setSelectedRel({ char_sender, char_recipient, status_name });
+                }}
+              >
+                {options}
+              </Select>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button type="submit" colorScheme="teal">
+              Submit
+            </Button>
+          </ModalFooter>
+        </form>
       </ModalContent>
     </Modal>
   );

@@ -519,7 +519,7 @@ class MapController {
     next: NextFunction,
   ) {
     const { mapID, status_name, char_sender, char_recipient } = req.body;
-
+    console.log(mapID, status_name, char_sender, char_recipient);
     try {
       const deleteCharRelationQuery = `
       DELETE FROM char_statuses cs
@@ -535,17 +535,17 @@ class MapController {
 
       const values = [char_sender, char_recipient, status_name, mapID];
 
-      const result = await query(deleteCharRelationQuery, values);
+      await query(deleteCharRelationQuery, values);
 
-      if (result.rows.length === 0) {
-        return next({
-          log: 'Could not find existing character relationship',
-          status: 404,
-          message: {
-            err: `Error in MapController.deleteCharacterRelationship`,
-          },
-        });
-      }
+      // if (result.rows.length === 0) {
+      //   return next({
+      //     log: 'Could not find existing character relationship',
+      //     status: 404,
+      //     message: {
+      //       err: `Error in MapController.deleteCharacterRelationship`,
+      //     },
+      //   });
+      // }
 
       return next();
     } catch (error) {

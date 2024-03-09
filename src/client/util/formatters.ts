@@ -23,7 +23,10 @@ export const formatFactionStatuses = (
 ) => {
   console.log(factionStatuses);
   for (let i = 0; i < factionStatuses.length; i++) {
-    if (!factionStatuses[i].faction_sender || !factionStatuses[i].faction_recipient)
+    if (
+      !factionStatuses[i].faction_sender ||
+      !factionStatuses[i].faction_recipient
+    )
       continue;
     links.push({
       source: factionStatuses[i].faction_sender,
@@ -44,6 +47,7 @@ export const formatCharacters = (
   const allCharacterRelations: Link[] = [];
   chars.forEach((char: Character) => {
     for (let i = 0; i < char.statuses.length; i++) {
+      console.log(char);
       if (!char.statuses[i].recipient || !char.statuses[i].status_name)
         continue;
       links.push({
@@ -57,6 +61,11 @@ export const formatCharacters = (
         source: char.character_name || '',
         target: char.statuses[i].recipient || '',
         status: char.statuses[i].status_name || '',
+        sender_id: char.character_id || '',
+        recipient_id:
+          chars.find(
+            (item) => item.character_name === char.statuses[i].recipient,
+          )?.character_id || '',
         distance: 150,
       });
     }

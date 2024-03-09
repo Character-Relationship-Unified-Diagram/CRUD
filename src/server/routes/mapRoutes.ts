@@ -1,7 +1,5 @@
 import express, { Request, Response } from 'express';
 import mapController from '../controllers/mapController';
-import { Route } from 'react-router';
-
 const Router = express.Router();
 
 // returns: array of objects (map_id, map_name)
@@ -61,13 +59,21 @@ Router.post(
   },
 );
 
-Router.post('/create-faction', mapController.createFaction, (_req: Request, res: Response) => {
-  return res.status(200).json(res.locals.faction);
-});
+Router.post(
+  '/create-faction',
+  mapController.createFaction,
+  (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals.faction);
+  },
+);
 
-Router.post('/create-faction-relationship', mapController.addFactionRelationship, (_req: Request, res: Response) => {
-  return res.status(200).json(res.locals.faction_relationship);
-});
+Router.post(
+  '/create-faction-relationship',
+  mapController.addFactionRelationship,
+  (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals.faction_relationship);
+  },
+);
 
 Router.delete(
   '/delete-character',
@@ -87,16 +93,31 @@ Router.delete(
   },
 );
 
-Router.delete('/delete-map', mapController.deleteMap, mapController.fetchCurrentUserMaps, (_req: Request, res: Response) => {
-  return res.status(200).json(res.locals);
-})
+Router.delete(
+  '/delete-map',
+  mapController.deleteMap,
+  mapController.fetchCurrentUserMaps,
+  (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals);
+  },
+);
 
-Router.delete('/delete-faction-status', mapController.deleteFactionRelationship, mapController.getMap, (_req: Request, res: Response) => {
-  return res.status(200).json(res.locals);
-})
+Router.delete(
+  '/delete-faction-status',
+  mapController.deleteFactionRelationship,
+  mapController.getMap,
+  (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals);
+  },
+);
 
-Router.delete('/delete-faction', mapController.deleteFaction, mapController.getMap, (_req: Request, res: Response) => {
-  return res.status(200).json(res.locals);
-})
+Router.delete(
+  '/delete-faction',
+  mapController.deleteFaction,
+  mapController.getMap,
+  (_req: Request, res: Response) => {
+    return res.status(200).json(res.locals);
+  },
+);
 
 export default Router;
