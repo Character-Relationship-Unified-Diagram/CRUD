@@ -12,7 +12,7 @@ import {
   setSelectedMapData,
 } from '../../redux/mainSlice';
 import { ToolTip } from './ToolTip';
-import { ArrowRightIcon } from '@chakra-ui/icons';
+import { ArrowRightIcon, ArrowDownIcon } from '@chakra-ui/icons';
 
 declare module '@nivo/network' {
   export interface InputLink {
@@ -29,6 +29,7 @@ declare module '@nivo/network' {
     description?: string;
     name: string;
     type: string;
+    attributes: { [key: string] : string | number};
   }
 
   export interface NodeTooltipProps<Node extends InputNode> {
@@ -200,6 +201,13 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
         centeringStrength={0.5}
         // distanceMax={200}
         nodeTooltip={(e) => {
+
+            const attributesElements = e.node.data.attributes ? Object.entries(e.node.data.attributes).map(([key, value]) => (
+            <div key={key}>
+              {key}: {value}
+            </div>
+            )) : null;
+
           return (
             <ToolTip>
               <Box display={'flex'} flexDirection={'column'}>
@@ -210,6 +218,13 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
                   <p>
                     Description <ArrowRightIcon /> {e.node.data.description}
                   </p>
+                )}
+                {attributesElements && (
+                <Box mt="2">
+                  <p>
+                    Attributes <ArrowDownIcon /> {attributesElements}
+                  </p>
+                </Box>
                 )}
               </Box>
             </ToolTip>
