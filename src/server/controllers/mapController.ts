@@ -565,26 +565,42 @@ class MapController {
     res: Response,
     next: NextFunction,
   ) {
-    const { faction_sender, faction_recipient, status_id } = req.body;
+    const { faction_sender, faction_recipient, status_name } = req.body;
     try {
+      
+      const getStatusIdQuery = `
+        SELECT status_id FROM statuses WHERE status_name = $1
+      `;
+      const statusIdResult = await query(getStatusIdQuery, [status_name]);
+      if (statusIdResult.rows.length === 0) {
+        return next({
+          log: 'Failed to retrieve status ID',
+          status: 400, 
+          message: {
+            err: 'Status name not found in the database',
+          },
+        });
+      }
+      const status_id = statusIdResult.rows[0].status_id;
+  
       const createFactionRelationshipQuery = `
-          INSERT INTO faction_statuses
-          (faction_sender, faction_recipient, status_id)
-          VALUES ($1, $2, $3)
-          RETURNING *
-        `;
-
+        INSERT INTO faction_statuses
+        (faction_sender, faction_recipient, status_id)
+        VALUES ($1, $2, $3)
+        RETURNING *
+      `;
+  
       const factionRelationValues = [
         faction_sender,
         faction_recipient,
         status_id,
       ];
-
+  
       const factionRelationResult = await query(
         createFactionRelationshipQuery,
         factionRelationValues,
       );
-
+  
       if (factionRelationResult.rows.length === 0) {
         return next({
           log: 'Failed to create faction relationship',
@@ -594,7 +610,7 @@ class MapController {
           },
         });
       }
-
+  
       res.locals.faction_relationship = factionRelationResult.rows;
       return next();
     } catch (error) {
@@ -605,6 +621,7 @@ class MapController {
       });
     }
   }
+  
 
   async createFaction(req: Request, res: Response, next: NextFunction) {
     const { faction_name, map_id } = req.body;

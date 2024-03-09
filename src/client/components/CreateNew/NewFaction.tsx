@@ -17,9 +17,9 @@ import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
 import { useAuth } from '../../context/Authentication';
 
-interface DiagFormData {
-  faction: string;
-}
+// interface DiagFormData {
+//   faction: string;
+// }
 
 export const NewFaction = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();

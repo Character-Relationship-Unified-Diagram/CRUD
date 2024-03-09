@@ -12,13 +12,16 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
+import { RootState } from '../../redux/store';
 
 export const NewDiagram = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const dispatch = useDispatch();
   const [mapName, setMapName] = useState<string>('');
+
+  const userId = useSelector((state: RootState) => state.main.user.id);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setMapName(event.target.value);
@@ -33,7 +36,10 @@ export const NewDiagram = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ map_name: mapName }),
+        body: JSON.stringify({
+          user_id: userId,
+          map_name: mapName 
+        }),
       });
 
       if (!response.ok) {
