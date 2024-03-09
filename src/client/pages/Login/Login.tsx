@@ -51,7 +51,8 @@ export const Login = () => {
       .then((data) => {
         console.log(data);
         dispatch(setUser(data));
-        return navigate('/dashboard');
+
+        navigate('/dashboard');
       })
       .catch((err) => {
         console.log(err);

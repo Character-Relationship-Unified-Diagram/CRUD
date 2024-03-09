@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { NetworkGraph } from '../NetworkGraph/';
-import { MapSelector } from '../MapSelector';
-import { setActiveModal } from '../../redux/mainSlice';
+import { setActiveModal, setAllMaps } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
 import { useEffect } from 'react';
 

@@ -14,10 +14,12 @@ import { EditIcon, PlusSquareIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setActiveModal,
+  setAllMaps,
   setSelectedMap,
   setSelectedMapName,
 } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
+import { useFetchUserMaps } from '../../hooks';
 
 export const MapSelectorButton = () => {
   const dispatch = useDispatch();
@@ -50,6 +52,7 @@ export const MapSelector = () => {
     }
   }, [maps]);
 
+  useFetchUserMaps();
   const handleSelection = (e: ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value !== '') {
       const [id, name] = e.target.value.split(' | ');

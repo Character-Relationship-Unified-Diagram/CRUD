@@ -5,7 +5,7 @@ const Router = express.Router();
 
 // returns: array of objects (map_id, map_name)
 // changing this to a post because a GET should not have a body
-Router.post(
+Router.get(
   '/get-maps',
   mapController.fetchCurrentUserMaps,
   (_req: Request, res: Response) => {
