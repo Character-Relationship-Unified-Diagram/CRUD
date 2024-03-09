@@ -295,16 +295,17 @@ async deleteMap(req: Request, res: Response, next: NextFunction) {
     const result = await query(query1, [mapID]);
     res.locals.chars = result.rows;
 
-    const factions: string[] = [];
+  
+    const query3 = `
+    SELECT DISTINCT f.*
+    FROM factions f
+    JOIN characters c ON f.faction_id = c.faction_id
+    WHERE c.map_id = $1;
+  `;
 
-    for (const char of res.locals.chars) {
-      const faction = char.faction_name;
-      if (!factions.includes(faction) && faction != null) {
-        factions.push(faction);
-      }
-    }
+  const result3 = await query(query3, [mapID]);
+  res.locals.factions = result3.rows;
 
-    res.locals.factions = factions;
 
     const query2 = `SELECT DISTINCT fs.*, sender.faction_name AS sender_name, recipient.faction_name AS recipient_name, s.status_name
       FROM faction_statuses fs
