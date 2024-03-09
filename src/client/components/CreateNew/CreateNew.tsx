@@ -112,21 +112,3 @@ export const CreateNewButton = () => {
     </Menu>
   );
 };
-
-export const CreateNew = ({
-  selection,
-  onClose,
-}: {
-  selection: ReactNode;
-  onClose: () => any;
-}) => {
-  return (
-    <Modal isOpen={true} onClose={onClose} isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalCloseButton onClick={onClose} />
-        {selection}
-      </ModalContent>
-    </Modal>
-  );
-};

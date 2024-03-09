@@ -1,8 +1,23 @@
 import { useContext, createContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { init } from '../redux/mainSlice';
+import {
+  init,
+  setAllSelectedMapData,
+  setIsLoading,
+  setSelectedMapData,
+} from '../redux/mainSlice';
 import { useDispatch } from 'react-redux';
-export const AuthContext = createContext({});
+import { formatAll } from '../util/formatters';
+
+interface AuthContextProps {
+  verifyUser: () => void;
+  fetchMap: (body: any) => void;
+}
+
+export const AuthContext = createContext<AuthContextProps>({
+  verifyUser: () => {},
+  fetchMap: () => {},
+});
 
 export const AuthProvider = ({ children }: any) => {
   const navigate = useNavigate();
@@ -45,8 +60,49 @@ export const AuthProvider = ({ children }: any) => {
     }
   }
 
+  function fetchMap(body: any) {
+    dispatch(setIsLoading(true));
+    fetch('/maps/getMap', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        dispatch(setIsLoading(false));
+        const {
+          nodes,
+          links,
+          factions,
+          characters,
+          charRelationships,
+          factionRelationships,
+        } = formatAll(data);
+
+        // console.log(data, nodes, links);
+
+        dispatch(setAllSelectedMapData(data));
+        dispatch(setSelectedMapData({ nodes, links }));
+        dispatch(
+          setAllSelectedMapData({
+            factions,
+            characters,
+            charRelationships,
+            factionRelationships,
+          }),
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        dispatch(setIsLoading(false));
+      });
+  }
+
   return (
-    <AuthContext.Provider value={{ verifyUser }}>
+    <AuthContext.Provider value={{ verifyUser, fetchMap }}>
       {children}
     </AuthContext.Provider>
   );
