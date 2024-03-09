@@ -78,4 +78,8 @@ Router.delete(
   },
 );
 
+Router.delete('/delete-map', mapController.deleteMap, mapController.fetchCurrentUserMaps, (_req: Request, res: Response) => {
+  return res.status(200).json(res.locals);
+})
+
 export default Router;

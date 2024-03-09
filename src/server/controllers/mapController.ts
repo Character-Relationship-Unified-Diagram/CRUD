@@ -118,6 +118,35 @@ class MapController {
 }
 
 
+async deleteMap(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { mapID } = req.body;
+
+
+        await query('DELETE FROM char_statuses WHERE char_sender IN (SELECT character_id FROM characters WHERE map_id = $1) OR char_recipient IN (SELECT character_id FROM characters WHERE map_id = $1)', [mapID]);
+
+        await query('DELETE FROM faction_statuses WHERE faction_sender IN (SELECT faction_id FROM factions WHERE map_id = $1) OR faction_recipient IN (SELECT faction_id FROM factions WHERE map_id = $1)', [mapID]);
+
+        await query('DELETE FROM factions WHERE map_id = $1', [mapID]);
+
+        await query('DELETE FROM char_attributes WHERE char_id IN (SELECT character_id FROM characters WHERE map_id = $1)', [mapID]);
+
+        await query('DELETE FROM characters WHERE map_id = $1', [mapID]);
+
+
+        return next()
+    } catch (error) {
+      return next({
+        log: 'Error occurred in deleting map',
+        status: 500,
+        message: { err: `Error in MapController.deleteCharacter` },
+      });
+    }
+}
+
+
+
+
   public async createCharacter(
     req: Request,
     res: Response,
