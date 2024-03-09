@@ -1,1 +1,1 @@
-export { MapSelector } from './MapSelector';
+export { MapSelector, MapSelectorButton } from './MapSelector';

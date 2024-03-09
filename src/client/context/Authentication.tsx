@@ -30,7 +30,6 @@ export const AuthProvider = ({ children }: any) => {
         })
         .then((data) => {
           if (data) {
-            console.log(data);
             dispatch(
               init({
                 user: { user_id: data.user_id, username: data.username },

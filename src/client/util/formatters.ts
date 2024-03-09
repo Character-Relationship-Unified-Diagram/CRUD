@@ -8,7 +8,7 @@ export const formatFactions = (factions: Faction[], nodes: Node[]) => {
       name: faction,
       color: '#d3d3d3',
       height: 100,
-      size: 100,
+      size: 35,
     });
   });
 };
@@ -18,14 +18,12 @@ export const formatFactionStatuses = (
   links: Link[],
 ) => {
   for (let i = 0; i < factionStatuses.length; i++) {
-    if (
-      !factionStatuses[i].faction_sender ||
-      !factionStatuses[i].faction_recipient
-    )
+    if (!factionStatuses[i].sender_name || !factionStatuses[i].recipient_name)
       continue;
     links.push({
-      source: factionStatuses[i].faction_sender || '',
-      target: factionStatuses[i].faction_recipient || '',
+      source: factionStatuses[i].sender_name || '',
+      target: factionStatuses[i].recipient_name || '',
+      status: factionStatuses[i].status_name || '',
       distance: 100,
     });
   }
@@ -44,16 +42,16 @@ export const formatCharacters = (
         source: char.character_name || '',
         target: char.statuses[i].recipient || '',
         status: char.statuses[i].status_name || '',
-        distance: 100,
+        distance: 50,
       });
     }
 
     nodes.push({
       id: char.character_name,
       name: char.character_name,
-      color: '#d3d3d3',
+      color: char.attr_value?.color || '#d3d3d3',
       height: 100,
-      size: 100,
+      size: 25,
       attributes: char.attr_value,
       statuses: char.statuses,
       faction: char.faction_name,
@@ -66,9 +64,10 @@ export const formatAll = (data: Data) => {
   const { factions, chars, factionStatuses } = data;
   const nodes: Node[] = [];
   const links: Link[] = [];
+  console.log(data);
   formatFactions(factions, nodes);
   //! commented for now due to a problem with the input data
-  // formatFactionStatuses(factionStatuses, links);
+  formatFactionStatuses(factionStatuses, links);
   formatCharacters(chars, links, nodes);
   return { nodes, links };
 };

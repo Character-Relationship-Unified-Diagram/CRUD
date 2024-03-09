@@ -26,19 +26,27 @@ interface MainState {
   selectedMap: '' | null;
   selectedMapName: string | null;
   allMaps: MapData[];
+  activeModal: number | null;
+  selectedMapData: { nodes: Node[]; links: Link[] };
 }
 
 const initialState: MainState = {
   user: { id: '', username: '' },
   selectedMap: null,
   selectedMapName: '',
-  allMaps: [{ id: '', name: '', nodes: [], links: [] }],
+  allMaps: [],
+  activeModal: null,
+  selectedMapData: { nodes: [], links: [] },
 };
 
 export const mainSlice = createSlice({
   name: 'main',
   initialState,
   reducers: {
+    init: (state, action) => {
+      state.user = action.payload.user;
+      state.allMaps = action.payload.allMaps;
+    },
     setAllMaps: (state, action) => {
       state.allMaps = action.payload;
     },
@@ -51,12 +59,21 @@ export const mainSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
     },
-    init: (state, action) => {
-      state.user = action.payload.user;
-      state.allMaps = action.payload.allMaps;
+    setActiveModal: (state, action) => {
+      state.activeModal = action.payload;
+    },
+    setSelectedMapData: (state, action) => {
+      state.selectedMapData = action.payload;
     },
   },
 });
 
-export const { setAllMaps, setSelectedMap, setUser, init, setSelectedMapName } =
-  mainSlice.actions;
+export const {
+  init,
+  setUser,
+  setAllMaps,
+  setActiveModal,
+  setSelectedMap,
+  setSelectedMapName,
+  setSelectedMapData,
+} = mainSlice.actions;
