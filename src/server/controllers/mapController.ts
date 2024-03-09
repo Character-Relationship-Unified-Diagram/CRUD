@@ -301,18 +301,23 @@ class MapController {
       const result = await query(query1, [mapID]);
       res.locals.chars = result.rows;
 
-      const query2 = `SELECT fs.*
-      FROM factions f
-      JOIN faction_statuses fs ON f.faction_id = fs.faction_recipient
-      WHERE f.map_id = $1;`;
+      const query2 = `SELECT DISTINCT fs.*, sender.faction_name AS sender_name, recipient.faction_name AS recipient_name, s.status_name
+      FROM faction_statuses fs
+      JOIN factions sender ON fs.faction_sender = sender.faction_id
+      JOIN factions recipient ON fs.faction_recipient = recipient.faction_id
+      JOIN statuses s ON fs.status_id = s.status_id
+      JOIN characters c ON sender.faction_id = c.faction_id
+      JOIN maps m ON c.map_id = m.map_id
+      WHERE m.map_id = $1;`;
 
       const result2 = await query(query2, [mapID]);
-      console.log(result2.rows);
       res.locals.factionStatuses = result2.rows;
 
-      const query3 = `SELECT f.faction_name, f.faction_id
+      const query3 = `
+      SELECT DISTINCT f.*
       FROM factions f
-      WHERE f.map_id = $1;`;
+      WHERE f.map_id = $1;
+      `;
 
       const result3 = await query(query3, [mapID]);
       console.log(result3.rows);
