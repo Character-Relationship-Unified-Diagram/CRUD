@@ -1,7 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Main } from './pages/Main';
 import { ChakraProvider } from '@chakra-ui/react';
-import { Dashboard } from './components/Dashboard';
+import { Dashboard, ReadOnlyDashboard } from './components/Dashboard';
 import { AuthProvider } from './context/Authentication';
 import { Login } from './pages/Login';
 import { Signup } from './pages/Signup';
@@ -13,6 +13,7 @@ export const App = () => {
     <ChakraProvider theme={theme}>
       <BrowserRouter>
         <Routes>
+          <Route path="/view/*" element={<ReadOnlyDashboard />} />
           <Route
             path="/"
             element={
