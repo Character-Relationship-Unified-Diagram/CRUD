@@ -542,11 +542,26 @@ async deleteMap(req: Request, res: Response, next: NextFunction) {
     _next: NextFunction,
   ) {}
 
-  async deleteFactionRelationship(
-    _req: Request,
-    _res: Response,
-    _next: NextFunction,
-  ) {}
+  async deleteFactionRelationship(req: Request, res: Response, next: NextFunction) {
+    try {
+        const { faction_stat_id } = req.body;
+
+        
+        await query('DELETE FROM faction_statuses WHERE faction_stat_id = $1', [faction_stat_id]);
+
+        res.locals.message = "faction relationship deleted!"
+        return next()
+    } catch (error) {
+       
+        console.error('Error deleting faction relationship:', error);
+
+        return next({
+          log: 'Error occurred in deleting the faction relationship',
+          status: 500,
+          message: { err: `Error in MapController.deleteFactionRelationship` },
+        });
+    }
+}
 }
 
 export default new MapController();
