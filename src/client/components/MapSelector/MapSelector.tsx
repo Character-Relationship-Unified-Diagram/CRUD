@@ -14,7 +14,6 @@ import { EditIcon, PlusSquareIcon } from '@chakra-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   setActiveModal,
-  setAllMaps,
   setSelectedMap,
   setSelectedMapName,
 } from '../../redux/mainSlice';

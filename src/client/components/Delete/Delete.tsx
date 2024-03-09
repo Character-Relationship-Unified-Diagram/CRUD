@@ -22,11 +22,14 @@ import { useState, ReactNode, FormEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
+import { useAuth } from '../../context/Authentication';
 
 export const DeleteDiagram = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const dispatch = useDispatch();
+  const { fetchMap } = useAuth();
   const [mapName, setMapName] = useState('');
+  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const allMaps = useSelector((state: RootState) => state.main.allMaps);
   const options = allMaps.map((map) => (
     <option key={map.map_id} value={map.map_id}>
@@ -55,6 +58,7 @@ export const DeleteDiagram = () => {
 
       onClose();
       dispatch(setActiveModal(1));
+      fetchMap({ mapID: selectedMap });
     } catch (error) {
       console.error('Error during diagram creation:', error);
     }
@@ -106,6 +110,7 @@ export const DeleteDiagram = () => {
 export const DeleteRelationship = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const dispatch = useDispatch();
+  const { fetchMap } = useAuth();
   const [selectedRel, setSelectedRel] = useState({
     char_sender: '',
     char_recipient: '',
@@ -144,6 +149,7 @@ export const DeleteRelationship = () => {
 
       onClose();
       dispatch(setActiveModal(null));
+      fetchMap({ mapID: selectedMap });
     } catch (error) {
       console.error('Error during character creation:', error);
     }
@@ -190,6 +196,7 @@ export const DeleteRelationship = () => {
 export const DeleteCharacter = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [characterID, setCharacterID] = useState('');
+  const { fetchMap } = useAuth();
   const dispatch = useDispatch();
   const selectedMapCharacters = useSelector(
     (state: RootState) => state.main.selectedMapCharacters,
@@ -219,6 +226,7 @@ export const DeleteCharacter = () => {
 
       onClose();
       dispatch(setActiveModal(null));
+      fetchMap({ mapID: selectedMapCharacters[0].map_id });
     } catch (error) {
       console.error('Error during character creation:', error);
     }
@@ -265,8 +273,10 @@ export const DeleteFaction = () => {
   const allFactions = useSelector(
     (state: RootState) => state.main.selectedMapFactions,
   );
+  const { fetchMap } = useAuth();
   const dispatch = useDispatch();
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const [factionID, setFactionID] = useState('');
   const options = allFactions.map((faction) => (
     <option key={faction.faction_id} value={faction.faction_id}>
@@ -293,6 +303,7 @@ export const DeleteFaction = () => {
 
       onClose();
       dispatch(setActiveModal(null));
+      fetchMap({ mapID: selectedMap });
     } catch (error) {
       console.error('Error during faction creation:', error);
     }
