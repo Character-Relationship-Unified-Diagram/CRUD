@@ -562,6 +562,27 @@ async deleteMap(req: Request, res: Response, next: NextFunction) {
         });
     }
 }
+
+async deleteFaction(req: Request, res: Response, next: NextFunction) {
+  try {
+      const { faction_id } = req.body;
+
+
+      await query('UPDATE characters SET faction_id = NULL WHERE faction_id = $1', [faction_id]);
+      await query('DELETE FROM faction_statuses WHERE faction_sender = $1 OR faction_recipient = $1', [faction_id]);
+      await query('DELETE FROM factions WHERE faction_id = $1', [faction_id]);
+    
+
+
+      return next()
+  } catch (error) {
+    return next({
+      log: 'Error occurred in deleting faction!',
+      status: 500,
+      message: { err: `Error in MapController.deleteFaction` },
+    });
+  }
+}
 }
 
 export default new MapController();
