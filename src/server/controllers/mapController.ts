@@ -298,8 +298,14 @@ class MapController {
       WHERE c."map_id" = $1
       GROUP BY c."character_id", ca."attr_value", f."faction_name";`;
 
-      const result = await query(query1, [mapID]);
-      res.locals.chars = result.rows;
+
+const query3 = `
+    SELECT DISTINCT f.*
+    FROM factions f
+    WHERE f.map_id = $1;
+  `;
+  const result3 = await query(query3, [mapID]);
+  res.locals.factions = result3.rows;
 
       const query2 = `SELECT DISTINCT fs.*, sender.faction_name AS sender_name, recipient.faction_name AS recipient_name, s.status_name
       FROM faction_statuses fs
