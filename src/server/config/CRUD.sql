@@ -13,6 +13,7 @@ CREATE TABLE "char_attributes" (
 CREATE TABLE "factions" (
   "faction_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
   "faction_name" text UNIQUE NOT NULL
+  "map_id" uuid
 );
 CREATE TABLE "statuses" (
   "status_id" uuid PRIMARY KEY DEFAULT (uuid_generate_v4()),
@@ -44,6 +45,9 @@ CREATE TABLE "users" (
 ALTER TABLE "characters"
 ADD CONSTRAINT fk_faction_id
 ADD FOREIGN KEY ("faction_id") REFERENCES "factions" ("faction_id");
+ALTER TABLE "characters"
+ADD CONSTRAINT fk_char_map_id
+ADD FOREIGN KEY ("map_id") REFERENCES "maps" ("map_id")
 ALTER TABLE "faction_statuses"
 ADD CONSTRAINT fk_faction_sender
 ADD FOREIGN KEY ("faction_sender") REFERENCES "factions" ("faction_id");

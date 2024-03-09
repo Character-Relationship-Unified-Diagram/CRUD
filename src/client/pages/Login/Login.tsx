@@ -10,39 +10,56 @@ import {
   FormLabel,
   Input,
   Button,
+  Spinner,
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MovingGrid } from '../../components/MovingGrid';
+import { setUser } from '../../redux/mainSlice';
 import './Login.css';
+import { LoadingOverlay } from '../../components/LoadingOverlay';
 
 export const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
-    fetch('/api/login', {
+    setLoading(true);
+    
+    const res = await fetch('/users/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ username, password }),
       credentials: 'include',
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        // dispatch({ type: 'SET_USER', payload: data });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    });
+
+    setLoading(false);
+    if (res.ok) {
+      if (res.status === 401) {
+        console.log('Invalid username or password');
+      } else if (res.status !== 200) {
+        console.log('An error occurred');
+      }
+      const data = await res.json();
+      console.log(data);
+      dispatch(setUser(data));
+      navigate('/dashboard');
+    } else {
+      setLoading(false);
+      alert('Invalid login');
+    }
   };
 
   return (
     <>
       <MovingGrid />
+      {loading && <LoadingOverlay size={'lg'} />}
       <Modal isOpen={true} onClose={() => {}} isCentered>
         <ModalOverlay />
         <ModalContent>

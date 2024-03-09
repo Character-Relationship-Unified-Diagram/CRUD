@@ -13,18 +13,20 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { MovingGrid } from '../../components/MovingGrid';
+import { setUser } from '../../redux/mainSlice';
 import './Signup.css';
 
 export const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleSignup = (e: any) => {
     e.preventDefault();
-    fetch('/api/signup', {
+    fetch('/users/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -32,9 +34,14 @@ export const Signup = () => {
       body: JSON.stringify({ username, password }),
       credentials: 'include',
     })
-      .then((res) => res.json())
+      .then((res) => {
+        console.log(res.status);
+        return res.json();
+      })
       .then((data) => {
-        // dispatch({ type: 'SET_USER', payload: data });
+        console.log(data);
+        dispatch(setUser(data));
+        return navigate('/');
       })
       .catch((err) => {
         console.log(err);
@@ -75,11 +82,7 @@ export const Signup = () => {
                     onChange={(e: any) => setPassword(e.target.value)}
                   />
                 </FormControl>
-                <Button
-                  width={'10rem'}
-                  type="submit"
-                  border="2px solid black"
-                >
+                <Button width={'10rem'} type="submit" border="2px solid black">
                   Signup
                 </Button>
                 <Link to="/login">Login</Link>
