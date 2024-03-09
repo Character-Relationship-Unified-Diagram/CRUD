@@ -68,7 +68,7 @@ class UserController {
 
     public async verifyUser(req: Request, res: Response, next: NextFunction) {
         const { username, password } = req.body;
-
+        console.log(username, password)
         try {
             if (!username || !password) {
                 return next({
@@ -79,7 +79,6 @@ class UserController {
             }
 
             const existingUser = await this.getUserByUsername(username);
-
             if (existingUser.rowCount === 0) {
                 return res.redirect('/signup');
             };

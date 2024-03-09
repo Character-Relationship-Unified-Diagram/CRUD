@@ -79,6 +79,8 @@ export const formatCharacters = (
       });
     }
 
+
+    // to account for multiple characters with the same name, we add the character_id to the node id
     nodes.push({
       id: char.character_name,
       name: char.character_name,

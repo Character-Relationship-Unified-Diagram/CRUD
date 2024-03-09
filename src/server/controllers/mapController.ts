@@ -298,19 +298,23 @@ class MapController {
       WHERE c."map_id" = $1
       GROUP BY c."character_id", ca."attr_value", f."faction_name";`;
       const result = await query(query1, [mapID]);
-     res.locals.chars = result.rows;
+      res.locals.chars = result.rows;
 
-
-      const query2 = `SELECT DISTINCT fs.*, sender.faction_name AS sender_name, recipient.faction_name AS recipient_name, s.status_name
-      FROM faction_statuses fs
-      JOIN factions sender ON fs.faction_sender = sender.faction_id
-      JOIN factions recipient ON fs.faction_recipient = recipient.faction_id
-      JOIN statuses s ON fs.status_id = s.status_id
-      JOIN characters c ON sender.faction_id = c.faction_id
-      JOIN maps m ON c.map_id = m.map_id
-      WHERE m.map_id = $1;`;
+      // const query2 = `SELECT DISTINCT fs.*, sender.faction_name AS sender_name, recipient.faction_name AS recipient_name, s.status_name
+      // FROM faction_statuses fs
+      // JOIN factions sender ON fs.faction_sender = sender.faction_id
+      // JOIN factions recipient ON fs.faction_recipient = recipient.faction_id
+      // JOIN statuses s ON fs.status_id = s.status_id
+      // JOIN characters c ON sender.faction_id = c.faction_id
+      // JOIN maps m ON c.map_id = m.map_id
+      // WHERE m.map_id = $1;`;
+      const query2 = `SELECT fs.*
+      FROM factions f
+      JOIN faction_statuses fs ON f.faction_id = fs.faction_sender
+      WHERE f.map_id = $1;`;
 
       const result2 = await query(query2, [mapID]);
+      console.log(result2.rows);
       res.locals.factionStatuses = result2.rows;
 
       const query3 = `
@@ -568,7 +572,6 @@ class MapController {
   ) {
     const { faction_sender, faction_recipient, status_name } = req.body;
     try {
-      
       const getStatusIdQuery = `
         SELECT status_id FROM statuses WHERE status_name = $1
       `;
@@ -576,32 +579,32 @@ class MapController {
       if (statusIdResult.rows.length === 0) {
         return next({
           log: 'Failed to retrieve status ID',
-          status: 400, 
+          status: 400,
           message: {
             err: 'Status name not found in the database',
           },
         });
       }
       const status_id = statusIdResult.rows[0].status_id;
-  
+
       const createFactionRelationshipQuery = `
         INSERT INTO faction_statuses
         (faction_sender, faction_recipient, status_id)
         VALUES ($1, $2, $3)
         RETURNING *
       `;
-  
+
       const factionRelationValues = [
         faction_sender,
         faction_recipient,
         status_id,
       ];
-  
+
       const factionRelationResult = await query(
         createFactionRelationshipQuery,
         factionRelationValues,
       );
-  
+
       if (factionRelationResult.rows.length === 0) {
         return next({
           log: 'Failed to create faction relationship',
@@ -611,7 +614,7 @@ class MapController {
           },
         });
       }
-  
+
       res.locals.faction_relationship = factionRelationResult.rows;
       return next();
     } catch (error) {
@@ -622,7 +625,6 @@ class MapController {
       });
     }
   }
-  
 
   async createFaction(req: Request, res: Response, next: NextFunction) {
     const { faction_name, map_id } = req.body;

@@ -46,8 +46,12 @@ export const NewDiagram = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      dispatch(setActiveModal(1));
       const result = await response.json();
       console.log('Success:', result);
+
+      onClose();
+      dispatch(setActiveModal(null));
     } catch (error) {
       console.error('Error during diagram creation:', error);
     }

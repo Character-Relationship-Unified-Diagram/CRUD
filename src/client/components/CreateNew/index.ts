@@ -1,4 +1,4 @@
-export { CreateNew, CreateNewButton } from './CreateNew';
+export { CreateNewButton } from './CreateNew';
 export { NewCharacter } from './NewCharacter';
 export { NewDiagram } from './NewDiagram';
 export { NewRelationship } from './NewRelationship';

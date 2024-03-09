@@ -11,9 +11,11 @@ import {
   Button,
 } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { Character, Faction } from '../../../types/data';
+import { useAuth } from '../../context/Authentication';
+import { setActiveModal } from '../../redux/mainSlice';
 
 const createCharacterRelationship = async (
   charRecipient: string,
@@ -189,6 +191,9 @@ const NewFactionRelationship = ({
 export const NewRelationship = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [mode, setMode] = useState<'character' | 'faction' | null>(null);
+  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
+  const dispatch = useDispatch();
+  const { fetchMap } = useAuth();
   const [formData, setFormData] = useState<{ [key: string]: string }>({
     relationshipStatus: '',
     statusSender: '',
@@ -218,14 +223,17 @@ export const NewRelationship = () => {
         formData.statusReceiver,
         formData.statusSender,
         formData.relationshipStatus,
-      );
+      ).then(() => fetchMap({ mapID: selectedMap }));
     } else if (mode === 'faction') {
       createFactionRelationship(
         formData.statusSender,
         formData.statusReceiver,
         formData.relationshipStatus,
-      );
+      ).then(() => fetchMap({ mapID: selectedMap }));
     }
+
+    onClose();
+    dispatch(setActiveModal(null));
   }
 
   useEffect(() => {
