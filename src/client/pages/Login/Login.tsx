@@ -29,6 +29,7 @@ export const Login = () => {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     setLoading(true);
+    
     const res = await fetch('/users/login', {
       method: 'POST',
       headers: {
