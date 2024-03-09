@@ -17,9 +17,11 @@ import {
 import { useEffect, useState, ReactNode } from 'react';
 import { ShareModal } from '../../components/Share/Share';
 import { DeleteFaction } from '../../components/Delete/Delete';
+import { LoadingOverlay } from '../../components/LoadingOverlay';
 
 export const Main = () => {
   const location = useLocation();
+  const isLoading = useSelector((state: RootState) => state.main.isLoading);
   const renderNav =
     location.pathname !== '/login' &&
     location.pathname !== '/signup' &&
@@ -69,9 +71,12 @@ export const Main = () => {
     }
   }, [modalNum]);
 
+  console.log(isLoading);
+
   return (
     <>
       {renderNav && <NavBar />}
+      {isLoading && <LoadingOverlay size="lg" />}
       <main>
         {renderNav && currentModal}
         <Outlet />

@@ -15,6 +15,7 @@ import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
+import { useAuth } from '../../context/Authentication';
 
 interface DiagFormData {
   faction: string;
@@ -25,6 +26,7 @@ export const NewFaction = () => {
   const dispatch = useDispatch();
   const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const [faction_name, setFactionName] = useState<string>('');
+  const { fetchMap } = useAuth();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setFactionName(event.target.value);
@@ -46,11 +48,15 @@ export const NewFaction = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      fetchMap({ mapID: selectedMap });
       const result = await response.json();
       console.log('Success:', result);
     } catch (error) {
       console.error('Error during faction creation:', error);
     }
+
+    onClose();
+    dispatch(setActiveModal(null));
   };
 
   useEffect(() => {

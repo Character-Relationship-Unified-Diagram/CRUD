@@ -39,7 +39,7 @@ app.use("*", (_req, res) => {
   );
 });
 
-app.use((_req: Request, res: Response) => res.sendStatus(404));
+// app.use((_req: Request, res: Response) => res.sendStatus(404));
 
 app.use(
   (

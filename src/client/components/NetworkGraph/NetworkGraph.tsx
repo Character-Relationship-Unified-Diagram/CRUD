@@ -13,6 +13,7 @@ import {
 } from '../../redux/mainSlice';
 import { ToolTip } from './ToolTip';
 import { ArrowRightIcon } from '@chakra-ui/icons';
+import { useAuth } from '../../context/Authentication';
 
 declare module '@nivo/network' {
   export interface InputLink {
@@ -48,7 +49,7 @@ interface NetworkGraphProps {
 export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
   const selectedMap = useSelector((state: any) => state.main.selectedMap);
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(false);
+  const { fetchMap } = useAuth();
   const data = useSelector((state: any) => state.main.selectedMapData);
 
   const svgRef = useRef(null);
@@ -72,44 +73,7 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
 
   useEffect(() => {
     if (selectedMap && !readOnlyMode) {
-      setLoading(true);
-      fetch('/maps/getMap', {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ mapID: selectedMap }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setLoading(false);
-          const {
-            nodes,
-            links,
-            factions,
-            characters,
-            charRelationships,
-            factionRelationships,
-          } = formatAll(data);
-
-          // console.log(data, nodes, links);
-
-          dispatch(setAllSelectedMapData(data));
-          dispatch(setSelectedMapData({ nodes, links }));
-          dispatch(
-            setAllSelectedMapData({
-              factions,
-              characters,
-              charRelationships,
-              factionRelationships,
-            }),
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-        });
+      fetchMap({ mapID: selectedMap });
     } else if (!selectedMap && readOnlyMode) {
       const queryParams = new URLSearchParams(location.search);
       // Getting the value of a specific query parameter
@@ -123,7 +87,6 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
       })
         .then((res) => res.json())
         .then((data) => {
-          setLoading(false);
           const {
             nodes,
             links,
@@ -148,7 +111,6 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
         })
         .catch((err) => {
           console.log(err);
-          setLoading(false);
         });
     }
   }, [selectedMap]);
@@ -164,7 +126,6 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
         backgroundImage: useColorModeValue(lightGrid, darkGrid),
       }}
     >
-      {loading && <LoadingOverlay size="lg" />}
       <ResponsiveNetwork
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}

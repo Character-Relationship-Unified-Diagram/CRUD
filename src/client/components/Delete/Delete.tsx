@@ -6,7 +6,6 @@ import {
   Button,
   FormLabel,
   FormControl,
-  Input,
   Modal,
   ModalHeader,
   ModalBody,
@@ -23,23 +22,6 @@ import { useState, ReactNode, FormEvent, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../redux/mainSlice';
 import { RootState } from '../../redux/store';
-import { Link } from '../../../types/data';
-
-// interface Attribute {
-//   key: string;
-//   value: string;
-// }
-
-// interface CharFormData {
-//   character: string;
-//   characterAttributes: { [key: string]: string };
-//   characterFaction: string;
-//   characterDescriptor: string;
-// }
-
-// interface DiagFormData {
-//   diagram: string;
-// }
 
 export const DeleteDiagram = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -70,6 +52,9 @@ export const DeleteDiagram = () => {
 
       const result = await response.json();
       console.log('Success:', result);
+
+      onClose();
+      dispatch(setActiveModal(1));
     } catch (error) {
       console.error('Error during diagram creation:', error);
     }
@@ -120,6 +105,7 @@ export const DeleteDiagram = () => {
 // add map_id to factions
 export const DeleteRelationship = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const dispatch = useDispatch();
   const [selectedRel, setSelectedRel] = useState({
     char_sender: '',
     char_recipient: '',
@@ -155,6 +141,9 @@ export const DeleteRelationship = () => {
       }
       const result = await response.json();
       console.log('Success:', result);
+
+      onClose();
+      dispatch(setActiveModal(null));
     } catch (error) {
       console.error('Error during character creation:', error);
     }
@@ -201,6 +190,7 @@ export const DeleteRelationship = () => {
 export const DeleteCharacter = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [characterID, setCharacterID] = useState('');
+  const dispatch = useDispatch();
   const selectedMapCharacters = useSelector(
     (state: RootState) => state.main.selectedMapCharacters,
   );
@@ -226,6 +216,9 @@ export const DeleteCharacter = () => {
       }
       const result = await response.json();
       console.log('Success:', result);
+
+      onClose();
+      dispatch(setActiveModal(null));
     } catch (error) {
       console.error('Error during character creation:', error);
     }
@@ -272,6 +265,7 @@ export const DeleteFaction = () => {
   const allFactions = useSelector(
     (state: RootState) => state.main.selectedMapFactions,
   );
+  const dispatch = useDispatch();
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [factionID, setFactionID] = useState('');
   const options = allFactions.map((faction) => (
@@ -296,6 +290,9 @@ export const DeleteFaction = () => {
       }
       const result = await response.json();
       console.log('Success:', result);
+
+      onClose();
+      dispatch(setActiveModal(null));
     } catch (error) {
       console.error('Error during faction creation:', error);
     }

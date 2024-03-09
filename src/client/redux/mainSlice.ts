@@ -17,6 +17,7 @@ interface MainState {
   selectedMapFactions: Faction[];
   selectedMapCharRelationships: Link[];
   selectedMapFactionRelationships: Link[];
+  isLoading: boolean;
 }
 
 const initialState: MainState = {
@@ -30,6 +31,7 @@ const initialState: MainState = {
   selectedMapFactions: [],
   selectedMapCharRelationships: [],
   selectedMapFactionRelationships: [],
+  isLoading: false,
 };
 
 export const mainSlice = createSlice({
@@ -77,6 +79,9 @@ export const mainSlice = createSlice({
       state.selectedMapFactionRelationships =
         action.payload.factionRelationships;
     },
+    setIsLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
   },
 });
 
@@ -85,6 +90,7 @@ export const {
   setUser,
   setAllMaps,
   clearState,
+  setIsLoading,
   setActiveModal,
   setSelectedMap,
   setSelectedMapName,

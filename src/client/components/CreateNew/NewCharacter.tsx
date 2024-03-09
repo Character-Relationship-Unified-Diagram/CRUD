@@ -15,8 +15,10 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { useAuth } from '../../context/Authentication';
+import { setActiveModal } from '../../redux/mainSlice';
 
 interface CharFormData {
   character_name: string;
@@ -34,6 +36,8 @@ interface Attribute {
 export const NewCharacter = () => {
   const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const { fetchMap } = useAuth();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState<CharFormData>({
     character_name: '',
     attr_value: {},
@@ -85,7 +89,7 @@ export const NewCharacter = () => {
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log('Character Creation Payload:', formData);
-    
+
     try {
       const response = await fetch('/maps/create-character', {
         method: 'POST',
@@ -99,8 +103,11 @@ export const NewCharacter = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      fetchMap({ mapID: formData.map_id });
       const result = await response.json();
       console.log('Success:', result);
+      onClose();
+      dispatch(setActiveModal(null));
     } catch (error) {
       console.error('Error during character creation:', error);
     }
