@@ -2,10 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import { Character, Faction, Link, Node } from '../../types/data';
 
 interface MapData {
-  id: string;
-  name: string;
-  nodes?: Node[];
-  links?: Link[];
+  map_id: string;
+  map_name: string;
 }
 
 interface MainState {

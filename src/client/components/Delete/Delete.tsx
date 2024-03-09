@@ -52,30 +52,24 @@ interface DiagFormData {
 export const DeleteDiagram = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState<DiagFormData>({
-    diagram: '',
-  });
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [event.target.name]: event.target.value });
-  };
+  const [mapName, setMapName] = useState('');
+  const allMaps = useSelector((state: RootState) => state.main.allMaps);
+  const options = allMaps.map((map) => (
+    <option key={map.map_id} value={map.map_id}>
+      {map.map_name}
+    </option>
+  ));
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const diagramCreationPayload = {
-      ...formData,
-    };
-
-    console.log('Diagram Creation Payload:', diagramCreationPayload);
-
     try {
       const response = await fetch('/maps/delete-map', {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(diagramCreationPayload),
+        body: JSON.stringify({ mapID: mapName }),
       });
 
       if (!response.ok) {
@@ -107,16 +101,18 @@ export const DeleteDiagram = () => {
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit}>
-          <ModalHeader>Delete Diagram</ModalHeader>
+          <ModalHeader>Delete Map</ModalHeader>
           <ModalBody>
             <FormControl>
-              <FormLabel>Diagram Name</FormLabel>
-              <Input
-                name="diagram"
-                value={formData.diagram}
-                onChange={handleChange}
-                placeholder="Diagram Name"
-              />
+              <Select
+                name="map"
+                placeholder="Map Name"
+                onChange={(event) => {
+                  setMapName(event.target.value);
+                }}
+              >
+                {options}
+              </Select>
             </FormControl>
           </ModalBody>
           <ModalFooter>
@@ -242,7 +238,7 @@ export const DeleteNewButton = () => {
             dispatch(setActiveModal(8));
           }}
         >
-          Delete Diagram
+          Delete Map
         </MenuItem>
         <MenuItem
           border={'none'}

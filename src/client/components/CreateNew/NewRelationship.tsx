@@ -47,9 +47,9 @@ const createCharacterRelationship = async (
 const createFactionRelationship = async (
   faction_sender: string,
   faction_recipient: string,
-  status_id: string,
+  status_name: string,
 ) => {
-  if (!faction_sender || !faction_recipient || !status_id) {
+  if (!faction_sender || !faction_recipient || !status_name) {
     throw new Error('Missing required fields');
   }
   try {
@@ -58,7 +58,7 @@ const createFactionRelationship = async (
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ faction_sender, faction_recipient, status_id }),
+      body: JSON.stringify({ faction_sender, faction_recipient, status_name }),
     });
 
     if (!response.ok) {
@@ -189,7 +189,6 @@ const NewFactionRelationship = ({
 export const NewRelationship = () => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const [mode, setMode] = useState<'character' | 'faction' | null>(null);
-  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
   const [formData, setFormData] = useState<{ [key: string]: string }>({
     relationshipStatus: '',
     statusSender: '',
@@ -224,7 +223,7 @@ export const NewRelationship = () => {
       createFactionRelationship(
         formData.statusSender,
         formData.statusReceiver,
-        selectedMap as string,
+        formData.relationshipStatus,
       );
     }
   }

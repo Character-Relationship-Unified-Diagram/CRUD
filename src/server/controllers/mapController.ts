@@ -114,23 +114,33 @@ class MapController {
     }
   }
 
-async deleteMap(req: Request, res: Response, next: NextFunction) {
+  async deleteMap(req: Request, res: Response, next: NextFunction) {
     try {
-        const { mapID } = req.body;
+      const { mapID } = req.body;
 
+      console.log(mapID);
+      await query(
+        'DELETE FROM char_statuses WHERE char_sender IN (SELECT character_id FROM characters WHERE map_id = $1) OR char_recipient IN (SELECT character_id FROM characters WHERE map_id = $1)',
+        [mapID],
+      );
 
-        await query('DELETE FROM char_statuses WHERE char_sender IN (SELECT character_id FROM characters WHERE map_id = $1) OR char_recipient IN (SELECT character_id FROM characters WHERE map_id = $1)', [mapID]);
+      await query(
+        'DELETE FROM faction_statuses WHERE faction_sender IN (SELECT faction_id FROM factions WHERE map_id = $1) OR faction_recipient IN (SELECT faction_id FROM factions WHERE map_id = $1)',
+        [mapID],
+      );
 
-        await query('DELETE FROM faction_statuses WHERE faction_sender IN (SELECT faction_id FROM factions WHERE map_id = $1) OR faction_recipient IN (SELECT faction_id FROM factions WHERE map_id = $1)', [mapID]);
+      await query('DELETE FROM factions WHERE map_id = $1', [mapID]);
 
-        await query('DELETE FROM factions WHERE map_id = $1', [mapID]);
+      await query(
+        'DELETE FROM char_attributes WHERE char_id IN (SELECT character_id FROM characters WHERE map_id = $1)',
+        [mapID],
+      );
 
-        await query('DELETE FROM char_attributes WHERE char_id IN (SELECT character_id FROM characters WHERE map_id = $1)', [mapID]);
+      await query('DELETE FROM characters WHERE map_id = $1', [mapID]);
 
-        await query('DELETE FROM characters WHERE map_id = $1', [mapID]);
+      await query('DELETE FROM maps WHERE map_id = $1', [mapID]);
 
-
-        return next()
+      return next();
     } catch (error) {
       return next({
         log: 'Error occurred in deleting map',
@@ -138,10 +148,7 @@ async deleteMap(req: Request, res: Response, next: NextFunction) {
         message: { err: `Error in MapController.deleteCharacter` },
       });
     }
-}
-
-
-
+  }
 
   public async createCharacter(
     req: Request,
@@ -634,47 +641,54 @@ async deleteMap(req: Request, res: Response, next: NextFunction) {
     _next: NextFunction,
   ) {}
 
-  async deleteFactionRelationship(req: Request, res: Response, next: NextFunction) {
+  async deleteFactionRelationship(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     try {
-        const { faction_stat_id } = req.body;
+      const { faction_stat_id } = req.body;
 
-        
-        await query('DELETE FROM faction_statuses WHERE faction_stat_id = $1', [faction_stat_id]);
+      await query('DELETE FROM faction_statuses WHERE faction_stat_id = $1', [
+        faction_stat_id,
+      ]);
 
-        res.locals.message = "faction relationship deleted!"
-        return next()
+      res.locals.message = 'faction relationship deleted!';
+      return next();
     } catch (error) {
-       
-        console.error('Error deleting faction relationship:', error);
+      console.error('Error deleting faction relationship:', error);
 
-        return next({
-          log: 'Error occurred in deleting the faction relationship',
-          status: 500,
-          message: { err: `Error in MapController.deleteFactionRelationship` },
-        });
+      return next({
+        log: 'Error occurred in deleting the faction relationship',
+        status: 500,
+        message: { err: `Error in MapController.deleteFactionRelationship` },
+      });
     }
-}
+  }
 
-async deleteFaction(req: Request, res: Response, next: NextFunction) {
-  try {
+  async deleteFaction(req: Request, res: Response, next: NextFunction) {
+    try {
       const { faction_id } = req.body;
 
-
-      await query('UPDATE characters SET faction_id = NULL WHERE faction_id = $1', [faction_id]);
-      await query('DELETE FROM faction_statuses WHERE faction_sender = $1 OR faction_recipient = $1', [faction_id]);
+      await query(
+        'UPDATE characters SET faction_id = NULL WHERE faction_id = $1',
+        [faction_id],
+      );
+      await query(
+        'DELETE FROM faction_statuses WHERE faction_sender = $1 OR faction_recipient = $1',
+        [faction_id],
+      );
       await query('DELETE FROM factions WHERE faction_id = $1', [faction_id]);
-    
 
-
-      return next()
-  } catch (error) {
-    return next({
-      log: 'Error occurred in deleting faction!',
-      status: 500,
-      message: { err: `Error in MapController.deleteFaction` },
-    });
+      return next();
+    } catch (error) {
+      return next({
+        log: 'Error occurred in deleting faction!',
+        status: 500,
+        message: { err: `Error in MapController.deleteFaction` },
+      });
+    }
   }
-}
 }
 
 export default new MapController();

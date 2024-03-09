@@ -23,13 +23,14 @@ import {
   LockIcon,
   ArrowRightIcon,
 } from '@chakra-ui/icons';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DeleteNewButton } from '../Delete';
 import { useNavigate } from 'react-router';
 import { Share } from '../Share';
 import { RootState } from '../../redux/store';
 import { CreateNewButton } from '../CreateNew';
 import { MapSelectorButton } from '../MapSelector';
+import { clearState } from '../../redux/mainSlice';
 // import { MapSelectorButton } from '../MapSelector/MapSelector';
 
 interface Props {
@@ -63,6 +64,7 @@ const NavLink = (props: Props) => {
 
 export const Logout = ({ user }: { user: string }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const sendLogout = () => {
     fetch('users/logout', {
       method: 'POST',
@@ -73,6 +75,7 @@ export const Logout = ({ user }: { user: string }) => {
     })
       .then((res) => {
         if (res.status === 200) {
+          dispatch(clearState());
           return navigate('/login');
         }
       })

@@ -166,8 +166,9 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
       <ResponsiveNetwork
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-        activeNodeSize={(n) => n.size * 1.5}
+        activeNodeSize={(n) => n.size * 1.1}
         repulsivity={100}
+        centeringStrength={0.5}
         iterations={60}
         nodeColor={(n) => n.color}
         nodeBorderWidth={2}
@@ -179,6 +180,7 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
           if (
             status === 'negative' ||
             status === 'enemies' ||
+            status === 'enemy' ||
             status === 'hostile'
           ) {
             return 'red';
@@ -193,14 +195,20 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
           return '#d3d3d3';
         }}
         nodeSize={(n) => n.size}
-        distanceMin={10}
+        distanceMin={0}
         distanceMax={200}
         nodeTooltip={(e) => {
           console.log(e);
           return (
-            <Box bg={useColorModeValue('white', 'gray.800')} p={5} rounded='1rem'>
-              Name: <strong>{e.node.data.name}</strong><br />
-              Type: <strong>{e.node.data.type}</strong><br />
+            <Box
+              bg={useColorModeValue('white', 'gray.800')}
+              p={5}
+              rounded="1rem"
+            >
+              Name: <strong>{e.node.data.name}</strong>
+              <br />
+              Type: <strong>{e.node.data.type}</strong>
+              <br />
             </Box>
           );
         }}
