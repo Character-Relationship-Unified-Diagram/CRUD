@@ -13,7 +13,6 @@ import {
 } from '../../redux/mainSlice';
 import { ToolTip } from './ToolTip';
 import { ArrowRightIcon } from '@chakra-ui/icons';
-import { useAuth } from '../../context/Authentication';
 
 declare module '@nivo/network' {
   export interface InputLink {
@@ -49,8 +48,9 @@ interface NetworkGraphProps {
 export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
   const selectedMap = useSelector((state: any) => state.main.selectedMap);
   const dispatch = useDispatch();
-  const { fetchMap } = useAuth();
+  const [loading, setLoading] = useState(false);
   const data = useSelector((state: any) => state.main.selectedMapData);
+  const svg = d3.select('#network-graph-svg');
 
   const svgRef = useRef(null);
   const lightGrid =
@@ -73,20 +73,18 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
 
   useEffect(() => {
     if (selectedMap && !readOnlyMode) {
-      fetchMap({ mapID: selectedMap });
-    } else if (!selectedMap && readOnlyMode) {
-      const queryParams = new URLSearchParams(location.search);
-      // Getting the value of a specific query parameter
-      const parameterValue = queryParams.get('pubID');
-      // console.log('parameterValue', parameterValue);
-      fetch(`/maps/getPublicMap?pubID=${parameterValue}`, {
-        method: 'GET',
+      setLoading(true);
+      fetch('/maps/getMap', {
+        method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ mapID: selectedMap }),
       })
         .then((res) => res.json())
         .then((data) => {
+          setLoading(false);
           const {
             nodes,
             links,
@@ -111,9 +109,116 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
+        });
+    } else if (!selectedMap && readOnlyMode) {
+      const queryParams = new URLSearchParams(location.search);
+      // Getting the value of a specific query parameter
+      const parameterValue = queryParams.get('pubID');
+      // console.log('parameterValue', parameterValue);
+      fetch(`/maps/getPublicMap?pubID=${parameterValue}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setLoading(false);
+          const {
+            nodes,
+            links,
+            factions,
+            characters,
+            charRelationships,
+            factionRelationships,
+          } = formatAll(data);
+
+          // console.log(data, nodes, links);
+
+          dispatch(setAllSelectedMapData(data));
+          dispatch(setSelectedMapData({ nodes, links }));
+          dispatch(
+            setAllSelectedMapData({
+              factions,
+              characters,
+              charRelationships,
+              factionRelationships,
+            }),
+          );
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
         });
     }
   }, [selectedMap]);
+
+  const testData = {
+    nodes: [
+      {
+        name: 'John',
+        id: 'John',
+      },
+      {
+        name: 'Sally',
+        id: 'Sally',
+      },
+    ],
+    links: [
+      {
+        source: 'John',
+        target: 'Sally',
+      },
+    ],
+  };
+
+  useEffect(() => {
+    const simulation = d3
+      .forceSimulation(testData.nodes as d3.SimulationNodeDatum[])
+      .force('charge', d3.forceManyBody())
+      .force(
+        'link',
+        d3
+          .forceLink(testData.links)
+          .id((d: any) => d.id)
+          .distance(100),
+      )
+      .force('center', d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2));
+
+    const link = svg
+      .append('g')
+      .selectAll('line')
+      .data(testData.links)
+      .enter()
+      .append('line')
+      .attr('stroke-width', (d: any) => Math.sqrt(d.value))
+      .style('stroke', '#aaa');
+    const node = svg
+      .append('g')
+      .selectAll('circle')
+      .data(testData.nodes)
+      .enter()
+      .append('circle')
+      .attr('r', 5)
+      .attr('fill', (d: any) => {
+        return 'red';
+      })
+      .attr('stroke', '#orange');
+
+    simulation.on('tick', () => {
+      link
+        .attr('x1', (d: any) => d.source.x)
+        .attr('y1', (d: any) => d.source.y)
+        .attr('x2', (d: any) => d.target.x)
+        .attr('y2', (d: any) => d.target.y);
+      node.attr('cx', (d: any) => d.x).attr('cy', (d: any) => d.y);
+    });
+
+    return () => {
+      svg.selectAll('g').remove();
+    };
+  }, [testData]);
 
   return (
     <div
@@ -126,7 +231,18 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
         backgroundImage: useColorModeValue(lightGrid, darkGrid),
       }}
     >
-      <ResponsiveNetwork
+      {loading && <LoadingOverlay size="lg" />}
+      <svg
+        width="100%"
+        height="100%"
+        id="network-graph-svg"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+        }}
+      ></svg>
+      {/* <ResponsiveNetwork
         data={data}
         margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         activeNodeSize={(n) => n.size * 1.1}
@@ -176,7 +292,7 @@ export const NetworkGraph = ({ readOnlyMode = false }: NetworkGraphProps) => {
             </ToolTip>
           );
         }}
-      />
+      /> */}
     </div>
   );
 };
