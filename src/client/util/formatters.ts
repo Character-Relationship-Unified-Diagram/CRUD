@@ -1,6 +1,7 @@
 import { Node, Link, Data } from '../../types/data';
 import { Character, Faction, FactionStatus } from '../../types/data';
 
+//! WARNING All functions here are impure and will mutate the input data
 export const formatFactions = (factions: Faction[], nodes: Node[]) => {
   for (let i = 0; i < factions.length; i++) {
     const faction = factions[i];
@@ -22,6 +23,7 @@ export const formatFactionStatuses = (
   links: Link[],
 ) => {
   console.log(factionStatuses);
+  const allFactionRelations: Link[] = [];
   for (let i = 0; i < factionStatuses.length; i++) {
     if (
       !factionStatuses[i].faction_sender ||
@@ -32,11 +34,21 @@ export const formatFactionStatuses = (
       source: factionStatuses[i].faction_sender,
       target: factionStatuses[i].faction_recipient,
       status: factionStatuses[i].status_name,
+      status_id: factionStatuses[i].status_id,
+      faction_stat_id: factionStatuses[i].faction_stat_id,
+      distance: 200,
+    });
+    allFactionRelations.push({
+      source: factionStatuses[i].faction_sender,
+      target: factionStatuses[i].faction_recipient,
+      status: factionStatuses[i].status_name,
+      status_id: factionStatuses[i].status_id,
+      faction_stat_id: factionStatuses[i].faction_stat_id,
       distance: 200,
     });
   }
 
-  return links;
+  return allFactionRelations;
 };
 
 export const formatCharacters = (
@@ -79,7 +91,6 @@ export const formatCharacters = (
       });
     }
 
-
     // to account for multiple characters with the same name, we add the character_id to the node id
     nodes.push({
       id: char.character_name,
@@ -95,7 +106,7 @@ export const formatCharacters = (
     });
   });
 
-  return { links, nodes, allCharacterRelations };
+  return allCharacterRelations;
 };
 
 export const formatAll = (data: Data) => {
@@ -106,7 +117,7 @@ export const formatAll = (data: Data) => {
   console.log(data);
   formatFactions(factions, nodes);
   const allfactionRelations = formatFactionStatuses(factionStatuses, links);
-  const { allCharacterRelations } = formatCharacters(chars, links, nodes);
+  const allCharacterRelations = formatCharacters(chars, links, nodes);
 
   return {
     nodes,

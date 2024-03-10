@@ -108,19 +108,25 @@ export const DeleteDiagram = () => {
 };
 // add map_id to factions
 export const DeleteRelationship = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
   const dispatch = useDispatch();
+  const { isOpen, onClose, onOpen } = useDisclosure();
   const { fetchMap } = useAuth();
+  const [mode, setMode] = useState<string | null>(null);
   const [selectedRel, setSelectedRel] = useState({
     char_sender: '',
     char_recipient: '',
     status_name: '',
   });
-  const selectedMapRelationships = useSelector(
+
+  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
+  const selectedMapCharRelationships = useSelector(
     (state: RootState) => state.main.selectedMapCharRelationships,
   );
-  const selectedMap = useSelector((state: RootState) => state.main.selectedMap);
-  const options = selectedMapRelationships.map((relationship) => (
+  const selectedMapFactionRelationships = useSelector(
+    (state: RootState) => state.main.selectedMapFactionRelationships,
+  );
+
+  const characterOptions = selectedMapCharRelationships.map((relationship) => (
     <option
       key={relationship.sender_id}
       value={`${relationship.sender_id} ${relationship.recipient_id} ${relationship.status}`}
@@ -129,18 +135,39 @@ export const DeleteRelationship = () => {
     </option>
   ));
 
+  const factionOptions = selectedMapFactionRelationships.map((relationship) => (
+    <option
+      key={relationship.faction_stat_id}
+      value={`${relationship.faction_stat_id}`}
+    >
+      {relationship.source + ' -> ' + relationship.target}
+    </option>
+  ));
+  console.log(selectedMapFactionRelationships)
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(selectedRel);
     try {
-      const response = await fetch('/maps/delete-character-relationship', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ ...selectedRel, mapID: selectedMap }),
-      });
-
+      const response =
+        mode === 'character'
+          ? await fetch('/maps/delete-character-relationship', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ ...selectedRel, mapID: selectedMap }),
+            })
+          : await fetch('/maps/delete-faction-status', {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                faction_stat_id: selectedRel.status_name,
+              }),
+            });
+      console.log(selectedRel.status_name);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -173,13 +200,43 @@ export const DeleteRelationship = () => {
                 name="relationship"
                 placeholder="Relationship"
                 onChange={(event) => {
-                  const [char_sender, char_recipient, status_name] =
-                    event.target.value.split(' ');
-                  setSelectedRel({ char_sender, char_recipient, status_name });
+                  setMode(event.target.value);
                 }}
               >
-                {options}
+                <option value="character">Character</option>
+                <option value="faction">Faction</option>
               </Select>
+              {mode === 'character' && (
+                <Select
+                  name="relationship"
+                  placeholder="Relationship"
+                  onChange={(event) => {
+                    const [char_sender, char_recipient, status_name] =
+                      event.target.value.split(' ');
+                    setSelectedRel({
+                      char_sender,
+                      char_recipient,
+                      status_name,
+                    });
+                  }}
+                >
+                  {characterOptions}
+                </Select>
+              )}
+              {mode === 'faction' && (
+                <Select
+                  name="relationship"
+                  placeholder="Relationship"
+                  onChange={(event) => {
+                    setSelectedRel({
+                      ...selectedRel,
+                      status_name: event.target.value,
+                    });
+                  }}
+                >
+                  {factionOptions}
+                </Select>
+              )}
             </FormControl>
           </ModalBody>
           <ModalFooter>
