@@ -58,4 +58,6 @@ export interface Link {
   status?: string;
   sender_id?: string;
   recipient_id?: string;
+  status_id?: string;
+  faction_stat_id?: string;
 }
